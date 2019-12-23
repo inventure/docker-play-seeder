@@ -1,3 +1,3 @@
 object docker {
-  val registry = "inventuremobile"
+  val registry = "talaengineering"
 }
