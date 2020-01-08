@@ -74,3 +74,11 @@ Below are the various ways of generating images;
  ``` 
  s"$registry/play-dependencies-seed:$playVersion-sbt-$sbtVersion-scala-$scalaVersion-slick-$slickVersion"
  ```
+
+### Note
+
+- When pushing to Dockerhub, the repository that will be pushed to is `[specified registry]/play-dependencies-seed`. If
+you encounter permission problems pushing ensure the following is in order;
+  - If the repository `play-dependencies-seed` does not already exist in the target account, ensure that you have 
+permissions to create repositories in the account 
+  - If the repository `play-dependencies-seed` already exists, ensure that you have write permissions to the repository
