@@ -200,6 +200,10 @@ object DockerSeedPlugin extends AutoPlugin {
           .replaceAll("\\[slick_version]", getAttributeKey(desiredSlickVersion))
           .replaceAll("\\[sbt_version]", getAttributeKey(desiredSbtVersion))
           .replaceAll("\\[scala_version]", getAttributeKey(desiredScalaVersion))
+          .replaceAll("\\[caffeine]", getAttributeKey(desiredSbtVersion).split('.').headOption match {
+            case Some("0") => "" // do not add caffeine for sbt 0.x
+            case _ => "\n  caffeine,"
+          })
         printWriter.println(replacedLine)
       }
       printWriter.close()
