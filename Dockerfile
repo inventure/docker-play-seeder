@@ -2,7 +2,7 @@ FROM debian:stretch-slim AS compile
 
 # Install ZIP and cURL
 RUN apt-get update && \
-    apt-get install -y zip unzip curl && \
+    apt-get install -y zip unzip curl git && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /tmp/*
 
