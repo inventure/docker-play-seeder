@@ -3,7 +3,7 @@
 source $HOME/.sdkman/bin/sdkman-init.sh
 
 # Install Java and SBT - Reference: https://www.scala-sbt.org/1.x/docs/Installing-sbt-on-Linux.html
-sdk install java $(sdk list java | grep -o "8\.[0-9]*\.[0-9]*\.hs-adpt" | head -1)
+sdk install java $(sdk list java | grep -o "8\.[0-9]*\.[0-9]*-tem" | head -1)
 sdk install sbt
 
 # Create a symlink to /usr/bin so they can be used in plain sh
