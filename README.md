@@ -40,15 +40,15 @@ Below are the various ways of generating images;
   [info] Set current project to play-docker-seeder (in build file:/Users/ivan/Code/env/inventure/apps/play-docker-seeder/)
   [info] ### Inquiring versions
   Play! version [2.7.3] : 2.7.2
-  Scala version [2.12.9] : 2.12.10
+  Scala version [2.12.16] : 2.12.16
   Slick version [3.0.3] :
-  Sbt version [1.3.3] :
+  Sbt version [1.4.9] :
   Docker registry [ivanoronee] :
   [info] Working with versions:
   [info] - play      => 2.7.2
-  [info] - scala     => 2.12.10
+  [info] - scala     => 2.12.16
   [info] - slick     => 3.0.3
-  [info] - sbt       => 1.3.3
+  [info] - sbt       => 1.4.9
   [info] - registry  => ivanoronee
   [info] ### Updating dependencies
   [info] ### Updating plugins
@@ -60,7 +60,7 @@ Below are the various ways of generating images;
 - Non interactive using custom values
    
   ``` 
-  sbt "dockerSeed play-version 2.7.2 scala-version 1.12.8 slick-version 3.3.2 sbt-version 1.2.4 docker-registry funkychicken" 
+  sbt "dockerSeed play-version 2.7.2 scala-version 2.12.16 slick-version 3.3.2 sbt-version 1.4.9 docker-registry funkychicken" 
   ```
   
  - Non interactive with some custom values and some default values
