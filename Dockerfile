@@ -1,4 +1,4 @@
-FROM debian:stretch-slim AS compile
+FROM debian:bullseye-20220801-slim AS compile
 
 # Install ZIP and cURL
 RUN apt-get update && \
