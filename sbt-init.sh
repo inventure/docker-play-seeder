@@ -4,8 +4,8 @@ source $HOME/.sdkman/bin/sdkman-init.sh
 
 # Install Java and SBT - Reference: https://www.scala-sbt.org/1.x/docs/Installing-sbt-on-Linux.html
 # By default, it installs the latest version of Java 8 from OpenJDK (jdk.java.net)
-sdk install java 8.0.302-open
-sdk install sbt
+sdk install java 11.0.16-amzn
+sdk install sbt 1.4.9
 
 # Create a symlink to /usr/bin so they can be used in plain sh
 ln -s $HOME/.sdkman/candidates/sbt/current/bin/sbt /usr/bin/sbt

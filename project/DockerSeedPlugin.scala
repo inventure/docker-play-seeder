@@ -225,7 +225,7 @@ object DockerSeedPlugin extends AutoPlugin {
     val scalaVersion = getAttributeKey(desiredScalaVersion)
     val registry = getAttributeKey(desiredDockerRegistry)
 
-    s"$registry/play-dependencies-seed:$playVersion-sbt-$sbtVersion-scala-$scalaVersion-slick-$slickVersion"
+    s"$registry/play-dependencies-seed:play-$playVersion-sbt-$sbtVersion-scala-$scalaVersion-slick-$slickVersion"
   }
 
   def readVersion(default: String, prompt: String, useDefault: Boolean, commandLineVersion: Option[String]): String = {
