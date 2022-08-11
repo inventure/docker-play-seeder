@@ -26,8 +26,8 @@ object DockerSeedPlugin extends AutoPlugin {
       val commandLineScalaVersion = AttributeKey[Option[String]]("command-line-scala-version")
       val desiredScalaVersion = AttributeKey[String]("desired-scala-version")
 
-      val commandLineSlickVersion = AttributeKey[Option[String]]("command-line-slick-version")
-      val desiredSlickVersion = AttributeKey[String]("desired-slick-version")
+      val commandLinePlaySlickVersion = AttributeKey[Option[String]]("command-line-slick-version")
+      val desiredPlaySlickVersion = AttributeKey[String]("desired-slick-version")
 
       val commandLineSbtVersion = AttributeKey[Option[String]]("command-line-sbt-version")
       val desiredSbtVersion = AttributeKey[String]("desired-sbt-version")
@@ -46,9 +46,9 @@ object DockerSeedPlugin extends AutoPlugin {
         (Space ~> token("scala-version") ~> Space ~> token(StringBasic, "<scala version>"))
           .map(ParseResult.ScalaVersion)
 
-      private[this] val SlickVersion: Parser[ParseResult] =
-        (Space ~> token("slick-version") ~> Space ~> token(StringBasic, "<slick version>"))
-          .map(ParseResult.SlickVersion)
+      private[this] val playSlickVersion: Parser[ParseResult] =
+        (Space ~> token("play-slick-version") ~> Space ~> token(StringBasic, "<play-slick version>"))
+          .map(ParseResult.playSlickVersion)
 
       private[this] val SbtVersion: Parser[ParseResult] =
         (Space ~> token("sbt-version") ~> Space ~> token(StringBasic, "<sbt version>"))
@@ -67,7 +67,7 @@ object DockerSeedPlugin extends AutoPlugin {
 
         final case class ScalaVersion(value: String) extends ParseResult
 
-        final case class SlickVersion(value: String) extends ParseResult
+        final case class playSlickVersion(value: String) extends ParseResult
 
         final case class SbtVersion(value: String) extends ParseResult
 
@@ -78,14 +78,14 @@ object DockerSeedPlugin extends AutoPlugin {
       }
 
       private[this] val dockerSeedParser: Parser[Seq[ParseResult]] =
-        (ScalaVersion | PlayVersion | SlickVersion | WithDefaults | SbtVersion | DockerRegistry).*
+        (ScalaVersion | PlayVersion | playSlickVersion | WithDefaults | SbtVersion | DockerRegistry).*
 
       val dockerSeedCommand: Command = Command(dockerSeedCommandKey)(_ => dockerSeedParser) { (st, args) =>
         val startState: State = st
           .put(useDefaults, args.contains(ParseResult.WithDefaults))
           .put(commandLinePlayVersion, args.collectFirst { case ParseResult.PlayVersion(value) => value })
           .put(commandLineScalaVersion, args.collectFirst { case ParseResult.ScalaVersion(value) => value })
-          .put(commandLineSlickVersion, args.collectFirst { case ParseResult.SlickVersion(value) => value })
+          .put(commandLinePlaySlickVersion, args.collectFirst { case ParseResult.playSlickVersion(value) => value })
           .put(commandLineSbtVersion, args.collectFirst { case ParseResult.SbtVersion(value) => value })
           .put(commandLineDockerRegistry, args.collectFirst { case ParseResult.DockerRegistry(value) => value })
 
@@ -108,7 +108,7 @@ object DockerSeedPlugin extends AutoPlugin {
     val useDefs = state.get(useDefaults).getOrElse(false)
     val play = readVersion(playVersion, "Play! version [%s] : ", useDefs, state.get(commandLinePlayVersion).flatten)
     val scala = readVersion(scalaVersion, "Scala version [%s] : ", useDefs, state.get(commandLineScalaVersion).flatten)
-    val slick = readVersion(slickVersion, "Slick version [%s] : ", useDefs, state.get(commandLineSlickVersion).flatten)
+    val slick = readVersion(playSlickVersion, "Play-Slick version [%s] : ", useDefs, state.get(commandLinePlaySlickVersion).flatten)
     val sbt = readVersion(sbtVersion, "Sbt version [%s] : ", useDefs, state.get(commandLineSbtVersion).flatten)
     val registry = readVersion(
       docker.registry, "Docker registry [%s] : ", useDefs, state.get(commandLineDockerRegistry).flatten
@@ -117,17 +117,17 @@ object DockerSeedPlugin extends AutoPlugin {
     val newState = state
       .put(desiredPlayVersion, play)
       .put(desiredScalaVersion, scala)
-      .put(desiredSlickVersion, slick)
+      .put(desiredPlaySlickVersion, slick)
       .put(desiredSbtVersion, sbt)
       .put(desiredDockerRegistry, registry)
 
     newState.log.info(
       s"""Working with versions:
-         |- play      => $play
-         |- scala     => $scala
-         |- slick     => $slick
-         |- sbt       => $sbt
-         |- registry  => $registry
+         |- play       => $play
+         |- scala      => $scala
+         |- play-slick => $slick
+         |- sbt        => $sbt
+         |- registry   => $registry
          |""".stripMargin)
 
     newState
@@ -197,7 +197,7 @@ object DockerSeedPlugin extends AutoPlugin {
       fileSource.getLines.foreach { line =>
         val replacedLine = line
           .replaceAll("\\[play_version]", getAttributeKey(desiredPlayVersion))
-          .replaceAll("\\[slick_version]", getAttributeKey(desiredSlickVersion))
+          .replaceAll("\\[play_slick_version]", getAttributeKey(desiredPlaySlickVersion))
           .replaceAll("\\[sbt_version]", getAttributeKey(desiredSbtVersion))
           .replaceAll("\\[scala_version]", getAttributeKey(desiredScalaVersion))
           .replaceAll("\\[caffeine]", getAttributeKey(desiredSbtVersion).split('.').headOption match {
@@ -220,12 +220,12 @@ object DockerSeedPlugin extends AutoPlugin {
 
   private def getDockerImageTag(implicit state: State): String = {
     val playVersion: String = getAttributeKey(desiredPlayVersion)
-    val slickVersion = getAttributeKey(desiredSlickVersion)
+    val playSlickVersion = getAttributeKey(desiredPlaySlickVersion)
     val sbtVersion = getAttributeKey(desiredSbtVersion)
     val scalaVersion = getAttributeKey(desiredScalaVersion)
     val registry = getAttributeKey(desiredDockerRegistry)
 
-    s"$registry/play-dependencies-seed:play-$playVersion-sbt-$sbtVersion-scala-$scalaVersion-slick-$slickVersion"
+    s"$registry/play-dependencies-seed:play-$playVersion-sbt-$sbtVersion-scala-$scalaVersion-play-slick-$playSlickVersion"
   }
 
   def readVersion(default: String, prompt: String, useDefault: Boolean, commandLineVersion: Option[String]): String = {
