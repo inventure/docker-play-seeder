@@ -11,7 +11,7 @@ Preliminary tests have shown that preemptively downloading and caching the above
 
 ### Usage
 
-You can use this project to generate Docker images containing cached versions of `play`, `sbt`, `scala` and `slick` 
+You can use this project to generate Docker images containing cached versions of `play`, `sbt`, `scala` and `play-slick` 
 deployed to a Docker registry of your choice — you must have permissions to push to the specified Docker registry.
 
 Below are the various ways of generating images;
@@ -41,15 +41,15 @@ Below are the various ways of generating images;
   [info] ### Inquiring versions
   Play! version [2.7.3] : 2.7.2
   Scala version [2.12.16] : 2.12.16
-  Slick version [3.0.3] :
+  Play-Slick version [3.0.3] :
   Sbt version [1.4.9] :
   Docker registry [ivanoronee] :
   [info] Working with versions:
-  [info] - play      => 2.7.2
-  [info] - scala     => 2.12.16
-  [info] - slick     => 3.0.3
-  [info] - sbt       => 1.4.9
-  [info] - registry  => ivanoronee
+  [info] - play       => 2.7.2
+  [info] - scala      => 2.12.16
+  [info] - play-slick => 3.0.3
+  [info] - sbt        => 1.4.9
+  [info] - registry   => ivanoronee
   [info] ### Updating dependencies
   [info] ### Updating plugins
   [info] ### Updating build properties
@@ -60,7 +60,7 @@ Below are the various ways of generating images;
 - Non interactive using custom values
    
   ``` 
-  sbt "dockerSeed play-version 2.7.2 scala-version 2.12.16 slick-version 3.3.2 sbt-version 1.4.9 docker-registry funkychicken" 
+  sbt "dockerSeed play-version 2.7.2 scala-version 2.12.16 play-slick-version 3.3.2 sbt-version 1.4.9 docker-registry funkychicken" 
   ```
   
  - Non interactive with some custom values and some default values
@@ -72,7 +72,7 @@ Below are the various ways of generating images;
  When the command returns, an image will be deployed to the specified docker registry. Below is the format of the image
  
  ``` 
- s"$registry/play-dependencies-seed:$playVersion-sbt-$sbtVersion-scala-$scalaVersion-slick-$slickVersion"
+ s"$registry/play-dependencies-seed:$playVersion-sbt-$sbtVersion-scala-$scalaVersion-play-slick-$playSlickVersion"
  ```
 
 ### Note
