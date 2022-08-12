@@ -66,7 +66,7 @@ Below are the various ways of generating images;
  - Non interactive with some custom values and some default values
  
    ``` 
-   sbt "dockerSeed with-defaults sbt-version 1.3.3 docker-registry monkeybusiness"
+   sbt "dockerSeed with-defaults sbt-version 1.7.1 docker-registry monkeybusiness"
    ``` 
    
  When the command returns, an image will be deployed to the specified docker registry. Below is the format of the image
