@@ -2,8 +2,7 @@ import java.io.{PrintWriter, Serializable}
 
 import scala.io.Source
 
-// Avoid conflict with classes of the same name in sbt._ when using SBT 0.13
-import scala.sys.process.{ProcessBuilder => SysProcessBuilder, ProcessLogger => SysProcessLogger, stringToProcess => sysStringToProcess}
+import scala.sys.process.{ProcessBuilder, ProcessLogger, stringToProcess}
 import scala.util.{Failure, Try}
 
 import sbt.Keys._
@@ -163,23 +162,23 @@ object DockerSeedPlugin extends AutoPlugin {
   private val runDockerBuild = { state: State =>
     state.log.info("### Building docker image")
     implicit val st: State = state
-    val log: SysProcessLogger = processLogger(state)
-    val process: SysProcessBuilder = sysStringToProcess(s"docker build -t ${getDockerImageTag(state)} .")
+    val log: ProcessLogger = processLogger(state)
+    val process: ProcessBuilder = stringToProcess(s"docker build -t ${getDockerImageTag(state)} .")
     if (process ! log != 0) sys.error("Error building image")
     state
   }
 
   private val runDockerPublish = { state: State =>
     state.log.info("### Pushing docker image. This process will take a while depending on your internet connection")
-    val log: SysProcessLogger = processLogger(state)
-    val process: SysProcessBuilder = sysStringToProcess(s"docker push ${getDockerImageTag(state)}")
+    val log: ProcessLogger = processLogger(state)
+    val process: ProcessBuilder = stringToProcess(s"docker push ${getDockerImageTag(state)}")
     if (process ! log != 0) sys.error("Error pushing docker image")
     state
   }
 
   private val resetDependencies: State => State = { state: State =>
     state.log.info("#### Resetting project dependencies to initial state")
-    val process: SysProcessBuilder = sysStringToProcess(s"git reset --hard HEAD")
+    val process: ProcessBuilder = stringToProcess(s"git reset --hard HEAD")
     if (process ! processLogger(state) != 0) sys.error("Error resetting project dependencies")
     state
   }
@@ -238,7 +237,7 @@ object DockerSeedPlugin extends AutoPlugin {
     }
   }
 
-  private def processLogger(st: State): SysProcessLogger = new SysProcessLogger {
+  private def processLogger(st: State): ProcessLogger = new ProcessLogger {
     override def err(s: => String): Unit = st.log.info(s)
 
     override def out(s: => String): Unit = st.log.info(s)
