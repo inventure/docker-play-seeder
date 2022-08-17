@@ -163,7 +163,7 @@ object DockerSeedPlugin extends AutoPlugin {
     state.log.info("### Building docker image")
     implicit val st: State = state
     val log: ProcessLogger = processLogger(state)
-    val process: ProcessBuilder = stringToProcess(s"docker build -t ${getDockerImageTag(state)} .")
+    val process: ProcessBuilder = stringToProcess(s"docker buildx build --platform linux/arm64/v8,linux/amd64 -t ${getDockerImageTag(state)} .")
     if (process ! log != 0) sys.error("Error building image")
     state
   }
