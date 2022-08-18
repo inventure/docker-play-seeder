@@ -163,16 +163,43 @@ object DockerSeedPlugin extends AutoPlugin {
     state.log.info("### Building docker image")
     implicit val st: State = state
     val log: ProcessLogger = processLogger(state)
-    val process: ProcessBuilder = stringToProcess(s"docker buildx build --platform linux/arm64/v8,linux/amd64 -t ${getDockerImageTag(state)} .")
+    val process: ProcessBuilder = stringToProcess(s"docker build -t ${getDockerImageTag(state)} .")
     if (process ! log != 0) sys.error("Error building image")
+    // The easy way to build multi-platform images. Still experimental enough it doesn't seem to work for us
+    //val log: ProcessLogger = processLogger(state)
+    //val process: ProcessBuilder = stringToProcess(s"docker buildx build --platform linux/arm64/v8,linux/amd64 -t ${getDockerImageTag(state)} .")
+    //if (process ! log != 0) sys.error("Error building image")
+
+    //This is the harder way to build multi-platform images
+    //val process1: ProcessBuilder = stringToProcess(s"docker build -t ${getDockerImageTag(state)}-manifest-amd64 --build-arg ARCH=amd64/ .")
+    //if (process1 ! log != 0) sys.error("Error building amd64 image")
+    //val process2: ProcessBuilder = stringToProcess(s"docker build -t ${getDockerImageTag(state)}-manifest-arm64v8 --build-arg ARCH=arm64v8/ .")
+    //if (process2 ! log != 0) sys.error("Error building arm64v8 image")
     state
   }
 
   private val runDockerPublish = { state: State =>
     state.log.info("### Pushing docker image. This process will take a while depending on your internet connection")
+    // The code to push a single image
     val log: ProcessLogger = processLogger(state)
     val process: ProcessBuilder = stringToProcess(s"docker push ${getDockerImageTag(state)}")
     if (process ! log != 0) sys.error("Error pushing docker image")
+
+    //the code to combine cross platform images with a single manifest
+//    val log1: ProcessLogger = processLogger(state)
+//    val process1: ProcessBuilder = stringToProcess(s"docker push ${getDockerImageTag(state)}-manifest-amd64")
+//    if (process1 ! log1 != 0) sys.error("Error pushing amd64 docker image")
+//    val log2: ProcessLogger = processLogger(state)
+//    val process2: ProcessBuilder = stringToProcess(s"docker push ${getDockerImageTag(state)}-manifest-arm64v8")
+//    if (process2 ! log2 != 0) sys.error("Error pushing arm64v8 docker image")
+//    val log3: ProcessLogger = processLogger(state)
+//    val process3: ProcessBuilder = stringToProcess(s"docker manifest create ${getDockerImageTag(state)}-manifest-combined" +
+//      s"--amend ${getDockerImageTag(state)}-manifest-amd64 --amend ${getDockerImageTag(state)}-manifest-arm64v8")
+//    if (process3 ! log3 != 0) sys.error("Error creating cross platform manifest")
+//    val log4: ProcessLogger = processLogger(state)
+//    val process4: ProcessBuilder = stringToProcess(s"docker manifest push ${getDockerImageTag(state)}-manifest-combined")
+//    if (process4 ! log4 != 0) sys.error("Error pushing combined docker manifest")
+
     state
   }
 
