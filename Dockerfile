@@ -7,6 +7,7 @@ RUN apt-get update && \
     rm -rf /tmp/*
 
 # Download SDKMAN
+ENV SDKMAN_DIR="/usr/local/sdkman"
 RUN curl -s "https://get.sdkman.io" | bash
 
 # Define working directory
