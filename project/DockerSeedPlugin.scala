@@ -21,6 +21,9 @@ object DockerSeedPlugin extends AutoPlugin {
       val commandLinePlayVersion = AttributeKey[Option[String]]("command-line-play-version")
       val desiredPlayVersion: AttributeKey[String] = AttributeKey[String]("desired-play-version")
 
+      val commandLinePlayJsonVersion = AttributeKey[Option[String]]("command-line-play-json-version")
+      val desiredPlayJsonVersion: AttributeKey[String] = AttributeKey[String]("desired-play-json-version")
+
       val commandLineScalaVersion = AttributeKey[Option[String]]("command-line-scala-version")
       val desiredScalaVersion = AttributeKey[String]("desired-scala-version")
 
@@ -42,6 +45,9 @@ object DockerSeedPlugin extends AutoPlugin {
 
       private[this] val PlayVersion: Parser[ParseResult] =
         (Space ~> token("play-version") ~> Space ~> token(StringBasic, "<play version>")).map(ParseResult.PlayVersion)
+
+      private[this] val PlayJsonVersion: Parser[ParseResult] =
+        (Space ~> token("play-json-version") ~> Space ~> token(StringBasic, "<play-json version>")).map(ParseResult.PlayJsonVersion)
 
       private[this] val ScalaVersion: Parser[ParseResult] =
         (Space ~> token("scala-version") ~> Space ~> token(StringBasic, "<scala version>"))
@@ -70,6 +76,8 @@ object DockerSeedPlugin extends AutoPlugin {
 
         final case class PlayVersion(value: String) extends ParseResult
 
+        final case class PlayJsonVersion(value: String) extends ParseResult
+
         final case class ScalaVersion(value: String) extends ParseResult
 
         final case class JavaVersion(value: String) extends ParseResult
@@ -91,6 +99,7 @@ object DockerSeedPlugin extends AutoPlugin {
         val startState: State = st
           .put(useDefaults, args.contains(ParseResult.WithDefaults))
           .put(commandLinePlayVersion, args.collectFirst { case ParseResult.PlayVersion(value) => value })
+          .put(commandLinePlayJsonVersion, args.collectFirst { case ParseResult.PlayJsonVersion(value) => value })
           .put(commandLineScalaVersion, args.collectFirst { case ParseResult.ScalaVersion(value) => value })
           .put(commandLineJavaVersion, args.collectFirst { case ParseResult.JavaVersion(value) => value })
           .put(commandLinePlaySlickVersion, args.collectFirst { case ParseResult.playSlickVersion(value) => value })
@@ -115,6 +124,7 @@ object DockerSeedPlugin extends AutoPlugin {
     state.log.info("### Inquiring versions")
     val useDefs = state.get(useDefaults).getOrElse(false)
     val play = readVersion(playVersion, "Play! version [%s] : ", useDefs, state.get(commandLinePlayVersion).flatten)
+    val playJson = readVersion(playJsonVersion, "play-json version [%s] : ", useDefs, state.get(commandLinePlayJsonVersion).flatten)
     val scala = readVersion(scalaVersion, "Scala version [%s] : ", useDefs, state.get(commandLineScalaVersion).flatten)
     val java = readVersion(javaVersion, "Java version [%s] : ", useDefs, state.get(commandLineJavaVersion).flatten)
     val slick = readVersion(playSlickVersion, "Play-Slick version [%s] : ", useDefs, state.get(commandLinePlaySlickVersion).flatten)
@@ -125,6 +135,7 @@ object DockerSeedPlugin extends AutoPlugin {
 
     val newState = state
       .put(desiredPlayVersion, play)
+      .put(desiredPlayJsonVersion, playJson)
       .put(desiredScalaVersion, scala)
       .put(desiredJavaVersion, java)
       .put(desiredPlaySlickVersion, slick)
@@ -134,6 +145,7 @@ object DockerSeedPlugin extends AutoPlugin {
     newState.log.info(
       s"""Working with versions:
          |- play       => $play
+         |- play-json  => $playJson
          |- scala      => $scala
          |- java       => $java
          |- play-slick => $slick
@@ -209,6 +221,7 @@ object DockerSeedPlugin extends AutoPlugin {
       fileSource.getLines.foreach { line =>
         val replacedLine = line
           .replaceAll("\\[play_version]", getAttributeKey(desiredPlayVersion))
+          .replaceAll("\\[play_json_version]", getAttributeKey(desiredPlayJsonVersion))
           .replaceAll("\\[play_slick_version]", getAttributeKey(desiredPlaySlickVersion))
           .replaceAll("\\[sbt_version]", getAttributeKey(desiredSbtVersion))
           .replaceAll("\\[scala_version]", getAttributeKey(desiredScalaVersion))
@@ -239,6 +252,7 @@ object DockerSeedPlugin extends AutoPlugin {
     val javaVersion = getAttributeKey(desiredJavaVersion)
     val registry = getAttributeKey(desiredDockerRegistry)
 
+    // play-json version is intentionally omitted from image tag
     s"$registry/play-dependencies-seed:play-$playVersion-sbt-$sbtVersion-scala-$scalaVersion-play-slick-$playSlickVersion-java-$javaVersion"
   }
 
