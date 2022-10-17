@@ -11,25 +11,22 @@ Preliminary tests have shown that preemptively downloading and caching the above
 
 ### Usage
 
-You can use this project to generate Docker images containing cached versions of `play`, `sbt`, `scala` and `play-slick` 
-deployed to a Docker registry of your choice — you must have permissions to push to the specified Docker registry.
+You can use this project to generate Docker images containing cached versions of `play`, `play-json`, `play-slick`,
+`sbt`, `scala`, and `java` deployed to a Docker registry of your choice — you must have permissions to push to the 
+specified Docker registry.
 
-Below are the various ways of generating images;
-
+Below are the various ways of generating images:
 - Using default values specified in `project/versions.scala` file
-  
-  ``` 
+  ```shell
   sbt "dockerSeed with-defaults"
   ```
 
 - Interactive using custom values
-  
-  ```
+  ```shell
   sbt dockerSeed
   ```
   
   You will be asked for the versions to be used. Below is a sample log of events from this process
-  
   ``` 
   $ sbt dockerSeed
   [info] Loading settings for project global-plugins from idea.sbt ...
@@ -40,6 +37,7 @@ Below are the various ways of generating images;
   [info] Set current project to play-docker-seeder (in build file:/Users/ivan/Code/env/inventure/apps/play-docker-seeder/)
   [info] ### Inquiring versions
   Play! version [2.7.4] : 2.7.4
+  play-json version [2.7.3] : 2.7.3
   Scala version [2.12.15] : 2.12.15
   Java version [17.0.4-amzn] : 17.0.4-amzn
   Play-Slick version [3.0.3] :
@@ -47,6 +45,7 @@ Below are the various ways of generating images;
   Docker registry [ivanoronee] :
   [info] Working with versions:
   [info] - play       => 2.7.4
+  [info] - play-json  => 2.7.3
   [info] - scala      => 2.12.15
   [info] - java       => 17.0.4-amzn
   [info] - play-slick => 3.0.3
@@ -60,19 +59,16 @@ Below are the various ways of generating images;
   ```
   
 - Non interactive using custom values
-   
-  ``` 
+  ```shell 
   sbt "dockerSeed play-version 2.7.4 scala-version 2.12.15 java-version 17.0.4-amzn play-slick-version 3.0.3 sbt-version 1.7.1 docker-registry funkychicken" 
   ```
   
  - Non interactive with some custom values and some default values
- 
-   ``` 
+   ```shell 
    sbt "dockerSeed with-defaults sbt-version 1.7.1 docker-registry monkeybusiness"
    ``` 
    
  When the command returns, an image will be deployed to the specified docker registry. Below is the format of the image
- 
  ``` 
  s"$registry/play-dependencies-seed:$playVersion-sbt-$sbtVersion-scala-$scalaVersion-play-slick-$playSlickVersion-java-$javaVersion"
  ```
@@ -101,39 +97,46 @@ Below are the various ways of generating images;
   docker manifest push tala/play-dependencies-seed:play-2.7.4-sbt-1.7.1-scala-2.12.15-play-slick-3.0.3-java-17.0.4-amzn-multi-arch
   ``
 
-### Note
-
+### Notes
+- Choosing the `play-json` version
+  
+  While this tool allows you to choose the `play-json` library independent from the Play! framework version,
+  we strongly recommend using the same version used by the framework. You could either inspect the dependency
+  using `sbt dependencyTree` or get this information from from Maven Central
+  ([example](https://mvnrepository.com/artifact/com.typesafe.play/play_2.13/2.8.17)). See illustration below:
+  ![image](docs/images/play-json-dependency.png)
+  
 - When pushing to Dockerhub, the repository that will be pushed to is `[specified registry]/play-dependencies-seed`. If
-you encounter permission problems pushing ensure the following is in order;
+you encounter permission problems pushing ensure the following is in order:
   - If the repository `play-dependencies-seed` does not already exist in the target account, ensure that you have 
 permissions to create repositories in the account 
   - If the repository `play-dependencies-seed` already exists, ensure that you have write permissions to the repository
 
 - This is the code related to multiple architecture for if we need to do so in the future.
-```scala
-// The easy way to build multi-platform images. Still experimental enough it doesn't seem to work for us
-val log: ProcessLogger = processLogger(state)
-val process: ProcessBuilder = stringToProcess(s"docker buildx build --platform linux/arm64/v8,linux/amd64 -t ${getDockerImageTag(state)} .")
-if (process ! log != 0) sys.error("Error building image")
-
-//This is the harder way to build multi-platform images
-val process1: ProcessBuilder = stringToProcess(s"docker build -t ${getDockerImageTag(state)}-manifest-amd64 --build-arg ARCH=amd64/ .")
-if (process1 ! log != 0) sys.error("Error building amd64 image")
-val process2: ProcessBuilder = stringToProcess(s"docker build -t ${getDockerImageTag(state)}-manifest-arm64v8 --build-arg ARCH=arm64v8/ .")
-if (process2 ! log != 0) sys.error("Error building arm64v8 image")
-
-//the code to combine cross platform images with a single manifest
-val log1: ProcessLogger = processLogger(state)
-val process1: ProcessBuilder = stringToProcess(s"docker push ${getDockerImageTag(state)}-manifest-amd64")
-if (process1 ! log1 != 0) sys.error("Error pushing amd64 docker image")
-val log2: ProcessLogger = processLogger(state)
-val process2: ProcessBuilder = stringToProcess(s"docker push ${getDockerImageTag(state)}-manifest-arm64v8")
-if (process2 ! log2 != 0) sys.error("Error pushing arm64v8 docker image")
-val log3: ProcessLogger = processLogger(state)
-val process3: ProcessBuilder = stringToProcess(s"docker manifest create ${getDockerImageTag(state)}-manifest-combined" +
-  s"--amend ${getDockerImageTag(state)}-manifest-amd64 --amend ${getDockerImageTag(state)}-manifest-arm64v8")
-if (process3 ! log3 != 0) sys.error("Error creating cross platform manifest")
-val log4: ProcessLogger = processLogger(state)
-val process4: ProcessBuilder = stringToProcess(s"docker manifest push ${getDockerImageTag(state)}-manifest-combined")
-if (process4 ! log4 != 0) sys.error("Error pushing combined docker manifest")
-```
+  ```scala
+  // The easy way to build multi-platform images. Still experimental enough it doesn't seem to work for us
+  val log: ProcessLogger = processLogger(state)
+  val process: ProcessBuilder = stringToProcess(s"docker buildx build --platform linux/arm64/v8,linux/amd64 -t ${getDockerImageTag(state)} .")
+  if (process ! log != 0) sys.error("Error building image")
+  
+  //This is the harder way to build multi-platform images
+  val process1: ProcessBuilder = stringToProcess(s"docker build -t ${getDockerImageTag(state)}-manifest-amd64 --build-arg ARCH=amd64/ .")
+  if (process1 ! log != 0) sys.error("Error building amd64 image")
+  val process2: ProcessBuilder = stringToProcess(s"docker build -t ${getDockerImageTag(state)}-manifest-arm64v8 --build-arg ARCH=arm64v8/ .")
+  if (process2 ! log != 0) sys.error("Error building arm64v8 image")
+  
+  //the code to combine cross platform images with a single manifest
+  val log1: ProcessLogger = processLogger(state)
+  val process1: ProcessBuilder = stringToProcess(s"docker push ${getDockerImageTag(state)}-manifest-amd64")
+  if (process1 ! log1 != 0) sys.error("Error pushing amd64 docker image")
+  val log2: ProcessLogger = processLogger(state)
+  val process2: ProcessBuilder = stringToProcess(s"docker push ${getDockerImageTag(state)}-manifest-arm64v8")
+  if (process2 ! log2 != 0) sys.error("Error pushing arm64v8 docker image")
+  val log3: ProcessLogger = processLogger(state)
+  val process3: ProcessBuilder = stringToProcess(s"docker manifest create ${getDockerImageTag(state)}-manifest-combined" +
+    s"--amend ${getDockerImageTag(state)}-manifest-amd64 --amend ${getDockerImageTag(state)}-manifest-arm64v8")
+  if (process3 ! log3 != 0) sys.error("Error creating cross platform manifest")
+  val log4: ProcessLogger = processLogger(state)
+  val process4: ProcessBuilder = stringToProcess(s"docker manifest push ${getDockerImageTag(state)}-manifest-combined")
+  if (process4 ! log4 != 0) sys.error("Error pushing combined docker manifest")
+  ```
