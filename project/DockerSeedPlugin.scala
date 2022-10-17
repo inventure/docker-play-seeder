@@ -108,7 +108,7 @@ object DockerSeedPlugin extends AutoPlugin {
 
         Function.chain(
           Seq(
-            inquireVersions, updateDependencies, updatePlugins, updateBuildProperties, runDockerBuild,
+            inquireVersions, updateDependencies, updatePlugins, updateBuildProperties, updateSbtInit, runDockerBuild,
             runDockerPublish, resetDependencies
           )
         )(startState)
@@ -180,6 +180,15 @@ object DockerSeedPlugin extends AutoPlugin {
     replacePlaceholders(
       placeholderFile = projectBase / "project" / "placeholders" / "build.properties",
       destinationFile = projectBase / "project" / "build.properties"
+    )
+  }
+
+  private val updateSbtInit = { implicit state: State =>
+    state.log.info("### Updating sbt-init.sh")
+    val projectBase = Project.extract(state).get(baseDirectory)
+    replacePlaceholders(
+      placeholderFile = projectBase / "project" / "placeholders" / "sbt-init.sh",
+      destinationFile = projectBase / "sbt-init.sh"
     )
   }
 
