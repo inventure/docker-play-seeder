@@ -36,16 +36,16 @@ Below are the various ways of generating images:
   [info] Loading settings for project root from dependencies.sbt,build.sbt ...
   [info] Set current project to play-docker-seeder (in build file:/Users/ivan/Code/env/inventure/apps/play-docker-seeder/)
   [info] ### Inquiring versions
-  Play! version [2.7.4] : 2.7.4
-  play-json version [2.7.3] : 2.7.3
+  Play! version [2.8.17] : 2.8.17
+  play-json version [2.8.2] : 2.8.2
   Scala version [2.12.15] : 2.12.15
   Java version [17.0.4-amzn] : 17.0.4-amzn
   Play-Slick version [3.0.3] :
   Sbt version [1.7.1] :
   Docker registry [ivanoronee] :
   [info] Working with versions:
-  [info] - play       => 2.7.4
-  [info] - play-json  => 2.7.3
+  [info] - play       => 2.8.17
+  [info] - play-json  => 2.8.2
   [info] - scala      => 2.12.15
   [info] - java       => 17.0.4-amzn
   [info] - play-slick => 3.0.3
@@ -60,7 +60,7 @@ Below are the various ways of generating images:
   
 - Non interactive using custom values
   ```shell 
-  sbt "dockerSeed play-version 2.7.4 scala-version 2.12.15 java-version 17.0.4-amzn play-slick-version 3.0.3 sbt-version 1.7.1 docker-registry funkychicken" 
+  sbt "dockerSeed play-version 2.8.17 scala-version 2.12.15 java-version 17.0.4-amzn play-slick-version 3.0.3 sbt-version 1.7.1 docker-registry funkychicken" 
   ```
   
  - Non interactive with some custom values and some default values
@@ -84,17 +84,17 @@ Below are the various ways of generating images:
   ```
   Example:
   ```shell
-  docker manifest create tala/play-dependencies-seed:play-2.7.4-sbt-1.7.1-scala-2.12.15-play-slick-3.0.3-java-17.0.4-amzn-multi-arch
-    --amend alice/play-dependencies-seed:play-2.7.4-sbt-1.7.1-scala-2.12.15-play-slick-3.0.3-java-17.0.4-amzn-arm64
-    --amend sally/play-dependencies-seed:play-2.7.4-sbt-1.7.1-scala-2.12.15-play-slick-3.0.3-java-17.0.4-amzn-amd64
+  docker manifest create tala/play-dependencies-seed:play-2.8.17-sbt-1.7.1-scala-2.12.15-play-slick-3.0.3-java-17.0.4-amzn-multi-arch
+    --amend alice/play-dependencies-seed:play-2.8.17-sbt-1.7.1-scala-2.12.15-play-slick-3.0.3-java-17.0.4-amzn-arm64
+    --amend sally/play-dependencies-seed:play-2.8.17-sbt-1.7.1-scala-2.12.15-play-slick-3.0.3-java-17.0.4-amzn-amd64
   ```
 - Check the combined manifest
   ``shell
-  docker manifest inspect tala/play-dependencies-seed:play-2.7.4-sbt-1.7.1-scala-2.12.15-play-slick-3.0.3-java-17.0.4-amzn-multi-arch
+  docker manifest inspect tala/play-dependencies-seed:play-2.8.17-sbt-1.7.1-scala-2.12.15-play-slick-3.0.3-java-17.0.4-amzn-multi-arch
   ``
 - Push the combined manifest
   ``shell
-  docker manifest push tala/play-dependencies-seed:play-2.7.4-sbt-1.7.1-scala-2.12.15-play-slick-3.0.3-java-17.0.4-amzn-multi-arch
+  docker manifest push tala/play-dependencies-seed:play-2.8.17-sbt-1.7.1-scala-2.12.15-play-slick-3.0.3-java-17.0.4-amzn-multi-arch
   ``
 
 ### Notes
