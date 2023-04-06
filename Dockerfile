@@ -1,4 +1,4 @@
-FROM debian:bullseye-20230109-slim AS compile
+FROM debian:stable-20230320-slim AS compile
 
 # Install ZIP and cURL
 RUN apt-get update && \
