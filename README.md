@@ -84,17 +84,17 @@ Below are the various ways of generating images:
   ```
   Example:
   ```shell
-  docker manifest create tala/play-dependencies-seed:play-2.8.19-sbt-1.8.2-scala-2.12.17-play-slick-3.0.4-java-17.0.4-amzn-multi-arch
+  docker manifest create talaengineering/play-dependencies-seed:play-2.8.19-sbt-1.8.2-scala-2.12.17-play-slick-3.0.4-java-17.0.4-amzn-multi-arch
     --amend alice/play-dependencies-seed:play-2.8.19-sbt-1.8.2-scala-2.12.17-play-slick-3.0.4-java-17.0.4-amzn-arm64
     --amend sally/play-dependencies-seed:play-2.8.19-sbt-1.8.2-scala-2.12.17-play-slick-3.0.4-java-17.0.4-amzn-amd64
   ```
 - Check the combined manifest
   ``shell
-  docker manifest inspect tala/play-dependencies-seed:play-2.8.17-sbt-1.7.1-scala-2.12.15-play-slick-3.0.3-java-17.0.4-amzn-multi-arch
+  docker manifest inspect talaengineering/play-dependencies-seed:play-2.8.17-sbt-1.7.1-scala-2.12.15-play-slick-3.0.3-java-17.0.4-amzn-multi-arch
   ``
 - Push the combined manifest
   ``shell
-  docker manifest push tala/play-dependencies-seed:play-2.8.17-sbt-1.7.1-scala-2.12.15-play-slick-3.0.3-java-17.0.4-amzn-multi-arch
+  docker manifest push talaengineering/play-dependencies-seed:play-2.8.17-sbt-1.7.1-scala-2.12.15-play-slick-3.0.3-java-17.0.4-amzn-multi-arch
   ``
 
 ### Notes
