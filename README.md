@@ -60,7 +60,7 @@ Below are the various ways of generating images:
   
 - Non interactive using custom values
   ```shell 
-  sbt "dockerSeed play-version 2.8.17 scala-version 2.12.15 java-version 17.0.4-amzn play-slick-version 3.0.4 sbt-version 1.8.2 docker-registry funkychicken" 
+  sbt "dockerSeed play-version 2.8.17 scala-version 2.12.15 java-version 17.0.4-amzn play-slick-version 3.0.4 sbt-version 1.8.3 docker-registry funkychicken" 
   ```
   
  - Non interactive with some custom values and some default values
@@ -84,9 +84,9 @@ Below are the various ways of generating images:
   ```
   Example:
   ```shell
-  docker manifest create tala/play-dependencies-seed:play-2.8.19-sbt-1.8.2-scala-2.12.17-play-slick-3.0.4-java-17.0.4-amzn-multi-arch
-    --amend alice/play-dependencies-seed:play-2.8.19-sbt-1.8.2-scala-2.12.17-play-slick-3.0.4-java-17.0.4-amzn-arm64
-    --amend sally/play-dependencies-seed:play-2.8.19-sbt-1.8.2-scala-2.12.17-play-slick-3.0.4-java-17.0.4-amzn-amd64
+  docker manifest create tala/play-dependencies-seed:play-2.8.19-sbt-1.8.3-scala-2.12.17-play-slick-3.0.4-java-17.0.4-amzn-multi-arch
+    --amend alice/play-dependencies-seed:play-2.8.19-sbt-1.8.3-scala-2.12.17-play-slick-3.0.4-java-17.0.4-amzn-arm64
+    --amend sally/play-dependencies-seed:play-2.8.19-sbt-1.8.3-scala-2.12.17-play-slick-3.0.4-java-17.0.4-amzn-amd64
   ```
 - Check the combined manifest
   ``shell
