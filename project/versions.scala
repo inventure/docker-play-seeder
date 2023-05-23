@@ -1,5 +1,5 @@
 object versions {
-  val javaVersion = "8.0.362-amzn"
+  val javaVersion = "8.0.372-amzn"
   val playVersion = "2.8.19"
   val playJsonVersion = "2.9.4"
   val playSlickVersion = "3.0.4"
