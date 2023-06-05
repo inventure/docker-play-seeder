@@ -4,5 +4,5 @@ object versions {
   val playJsonVersion = "2.9.4"
   val playSlickVersion = "3.0.4"
   val scalaVersion = "2.12.17"
-  val sbtVersion = "1.8.3"
+  val sbtVersion = "1.9.0" //make sure to also bump build.properties
 }
