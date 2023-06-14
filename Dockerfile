@@ -2,7 +2,7 @@ FROM debian:stable-20230522-slim AS compile
 
 # Install ZIP and cURL
 RUN apt-get update && \
-    apt-get install -y zip unzip curl git && \
+    apt-get install -y zip unzip curl git jq && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /tmp/*
 
