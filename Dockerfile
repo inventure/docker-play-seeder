@@ -1,4 +1,4 @@
-FROM debian:stable-20230522-slim AS compile
+FROM debian:stable-20230612-slim AS compile
 
 # Install ZIP and cURL
 RUN apt-get update && \
