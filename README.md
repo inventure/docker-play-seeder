@@ -73,7 +73,7 @@ Below are the various ways of generating images:
  s"$registry/play-dependencies-seed:$playVersion-sbt-$sbtVersion-scala-$scalaVersion-play-slick-$playSlickVersion-java-$javaVersion"
  ```
 
-### Combining multiple images into a single multi-arch repository
+### Combining multiple images into a single multiarch repository
 - Create images for each os/arch you wish to support with compatible machine
   (e.g. use Intel machine to create amd64 image, Apple M1 machine to create arm64 image, etc)
 - Run the following command to combine the manifest
@@ -84,17 +84,17 @@ Below are the various ways of generating images:
   ```
   Example:
   ```shell
-  docker manifest create tala/play-dependencies-seed:play-2.8.19-sbt-1.9.1-scala-2.12.18-play-slick-3.0.4-java-17.0.4-amzn-multi-arch
+  docker manifest create tala/play-dependencies-seed:play-2.8.19-sbt-1.9.1-scala-2.12.18-play-slick-3.0.4-java-17.0.4-amzn-multiarch
     --amend alice/play-dependencies-seed:play-2.8.19-sbt-1.9.1-scala-2.12.18-play-slick-3.0.4-java-17.0.4-amzn-arm64
     --amend sally/play-dependencies-seed:play-2.8.19-sbt-1.9.1-scala-2.12.18-play-slick-3.0.4-java-17.0.4-amzn-amd64
   ```
 - Check the combined manifest
   ``shell
-  docker manifest inspect tala/play-dependencies-seed:play-2.8.17-sbt-1.9.1-scala-2.12.18-play-slick-3.0.3-java-17.0.4-amzn-multi-arch
+  docker manifest inspect tala/play-dependencies-seed:play-2.8.17-sbt-1.9.1-scala-2.12.18-play-slick-3.0.3-java-17.0.4-amzn-multiarch
   ``
 - Push the combined manifest
   ``shell
-  docker manifest push tala/play-dependencies-seed:play-2.8.17-sbt-1.9.1-scala-2.12.18-play-slick-3.0.3-java-17.0.4-amzn-multi-arch
+  docker manifest push tala/play-dependencies-seed:play-2.8.17-sbt-1.9.1-scala-2.12.18-play-slick-3.0.3-java-17.0.4-amzn-multiarch
   ``
 
 ### Notes
