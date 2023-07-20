@@ -60,7 +60,7 @@ Below are the various ways of generating images:
   
 - Non interactive using custom values
   ```shell 
-  sbt "dockerSeed play-version 2.8.17 scala-version 2.12.18 java-version 17.0.4-amzn play-slick-version 3.0.4 sbt-version 1.9.2 docker-registry funkychicken" 
+  sbt "dockerSeed play-version 2.8.20 scala-version 2.12.18 java-version 17.0.4-amzn play-slick-version 3.0.4 sbt-version 1.9.2 docker-registry funkychicken" 
   ```
   
  - Non interactive with some custom values and some default values
