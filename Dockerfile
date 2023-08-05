@@ -1,4 +1,5 @@
-FROM debian:stable-20230522-slim AS compile
+ARG BASE_IMAGE
+FROM $BASE_IMAGE AS compile
 
 # Install ZIP and cURL
 RUN apt-get update && \

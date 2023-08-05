@@ -1,7 +1,6 @@
 import java.io.{PrintWriter, Serializable}
 
 import scala.io.Source
-
 import scala.sys.process.{ProcessBuilder, ProcessLogger, stringToProcess}
 import scala.util.{Failure, Try}
 
@@ -17,6 +16,9 @@ object DockerSeedPlugin extends AutoPlugin {
     object DockerSeedKeys {
 
       val useDefaults = AttributeKey[Boolean]("use-defaults")
+
+      val commandLineBaseImage = AttributeKey[Option[String]]("command-line-base-image")
+      val desiredBaseImage: AttributeKey[String] = AttributeKey[String]("desired-base-image")
 
       val commandLinePlayVersion = AttributeKey[Option[String]]("command-line-play-version")
       val desiredPlayVersion: AttributeKey[String] = AttributeKey[String]("desired-play-version")
@@ -42,6 +44,9 @@ object DockerSeedPlugin extends AutoPlugin {
       private lazy val dockerSeedCommandKey = "dockerSeed"
 
       private[this] sealed abstract class ParseResult extends Product with Serializable
+
+      private[this] val BaseImage: Parser[ParseResult] =
+        (Space ~> token("base-image") ~> Space ~> token(StringBasic, "<base image>")).map(ParseResult.BaseImage)
 
       private[this] val PlayVersion: Parser[ParseResult] =
         (Space ~> token("play-version") ~> Space ~> token(StringBasic, "<play version>")).map(ParseResult.PlayVersion)
@@ -74,6 +79,8 @@ object DockerSeedPlugin extends AutoPlugin {
 
       private[this] object ParseResult {
 
+        final case class BaseImage(value: String) extends ParseResult
+
         final case class PlayVersion(value: String) extends ParseResult
 
         final case class PlayJsonVersion(value: String) extends ParseResult
@@ -93,11 +100,12 @@ object DockerSeedPlugin extends AutoPlugin {
       }
 
       private[this] val dockerSeedParser: Parser[Seq[ParseResult]] =
-        (ScalaVersion | JavaVersion | PlayVersion | playSlickVersion | WithDefaults | SbtVersion | DockerRegistry).*
+        (BaseImage | ScalaVersion | JavaVersion | PlayVersion | playSlickVersion | WithDefaults | SbtVersion | DockerRegistry).*
 
       val dockerSeedCommand: Command = Command(dockerSeedCommandKey)(_ => dockerSeedParser) { (st, args) =>
         val startState: State = st
           .put(useDefaults, args.contains(ParseResult.WithDefaults))
+          .put(commandLineBaseImage, args.collectFirst { case ParseResult.BaseImage(value) => value })
           .put(commandLinePlayVersion, args.collectFirst { case ParseResult.PlayVersion(value) => value })
           .put(commandLinePlayJsonVersion, args.collectFirst { case ParseResult.PlayJsonVersion(value) => value })
           .put(commandLineScalaVersion, args.collectFirst { case ParseResult.ScalaVersion(value) => value })
@@ -123,6 +131,7 @@ object DockerSeedPlugin extends AutoPlugin {
     import versions._
     state.log.info("### Inquiring versions")
     val useDefs = state.get(useDefaults).getOrElse(false)
+    val base = readVersion(baseImage, "Base Docker Image [%s] : ", useDefs, state.get(commandLineBaseImage).flatten)
     val play = readVersion(playVersion, "Play! version [%s] : ", useDefs, state.get(commandLinePlayVersion).flatten)
     val playJson = readVersion(playJsonVersion, "play-json version [%s] : ", useDefs, state.get(commandLinePlayJsonVersion).flatten)
     val scala = readVersion(scalaVersion, "Scala version [%s] : ", useDefs, state.get(commandLineScalaVersion).flatten)
@@ -134,6 +143,7 @@ object DockerSeedPlugin extends AutoPlugin {
     )
 
     val newState = state
+      .put(desiredBaseImage, base)
       .put(desiredPlayVersion, play)
       .put(desiredPlayJsonVersion, playJson)
       .put(desiredScalaVersion, scala)
@@ -144,6 +154,7 @@ object DockerSeedPlugin extends AutoPlugin {
 
     newState.log.info(
       s"""Working with versions:
+         |- base-image => $base
          |- play       => $play
          |- play-json  => $playJson
          |- scala      => $scala
@@ -194,9 +205,10 @@ object DockerSeedPlugin extends AutoPlugin {
 
   private val runDockerBuild = { state: State =>
     state.log.info("### Building docker image")
-    implicit val st: State = state
     val log: ProcessLogger = processLogger(state)
-    val process: ProcessBuilder = stringToProcess(s"docker build -t ${getDockerImageTag(state)} .")
+    val imageTag: String = getDockerImageTag(state)
+    val imageName: String = getAttributeKey(desiredBaseImage)(state)
+    val process: ProcessBuilder = stringToProcess(s"docker build -t $imageTag --build-arg BASE_IMAGE=$imageName .")
     if (process ! log != 0) sys.error("Error building image")
     state
   }
@@ -254,6 +266,7 @@ object DockerSeedPlugin extends AutoPlugin {
   }
 
   private def getDockerImageTag(implicit state: State): String = {
+    val baseImage: String = getAttributeKey(desiredBaseImage).replace(':', '-')
     val playVersion: String = getAttributeKey(desiredPlayVersion)
     val playSlickVersion = getAttributeKey(desiredPlaySlickVersion)
     val sbtVersion = getAttributeKey(desiredSbtVersion)
@@ -262,7 +275,13 @@ object DockerSeedPlugin extends AutoPlugin {
     val registry = getAttributeKey(desiredDockerRegistry)
 
     // play-json version is intentionally omitted from image tag
-    s"$registry/play-dependencies-seed:play-$playVersion-sbt-$sbtVersion-scala-$scalaVersion-play-slick-$playSlickVersion-java-$javaVersion"
+    s"$registry/play-dependencies-seed:" +
+      s"play-$playVersion-" +
+      s"sbt-$sbtVersion-" +
+      s"scala-$scalaVersion-" +
+      s"play-slick-$playSlickVersion-" +
+      s"java-$javaVersion-" +
+      s"$baseImage"
   }
 
   def readVersion(default: String, prompt: String, useDefault: Boolean, commandLineVersion: Option[String]): String = {
@@ -283,8 +302,5 @@ object DockerSeedPlugin extends AutoPlugin {
     override def buffer[T](f: => T): T = st.log.buffer(f)
   }
 
-  override lazy val projectSettings: Seq[Setting[_]] = Seq[Setting[_]](
-    commands += dockerSeedCommand
-  )
+  override lazy val projectSettings: Seq[Setting[_]] = Seq[Setting[_]](commands += dockerSeedCommand)
 }
-
