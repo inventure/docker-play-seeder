@@ -5,7 +5,7 @@ source $SDKMAN_DIR/bin/sdkman-init.sh
 # Install Java and SBT - Reference: https://www.scala-sbt.org/1.x/docs/Installing-sbt-on-Linux.html
 sdk update
 sdk install java 8.0.382-amzn
-sdk install sbt 1.8.2
+sdk install sbt 1.9.4
 
 # Create a symlink to /usr/bin so they can be used in plain sh
 ln -s $SDKMAN_DIR/candidates/sbt/current/bin/sbt /usr/bin/sbt
