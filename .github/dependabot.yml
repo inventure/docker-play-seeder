@@ -1,16 +1,17 @@
 version: 2
-registries:
-  tala-jfrog-repository:
-    type: docker-registry
-    url: https://tala-tala-dockerhub.jfrog.io/
-    username: ${{ secrets.JFROG_ARTIFACTORY_CREDENTIALS_USR }}
-    password: ${{ secrets.JFROG_ARTIFACTORY_CREDENTIALS_PSW }}
+# Since this repo is public, it doesn't have access to our organization secrets
+# registries:
+#   tala-jfrog-repository:
+#     type: docker-registry
+#     url: https://tala-tala-dockerhub.jfrog.io/
+#     username: ${{ secrets.JFROG_ARTIFACTORY_CREDENTIALS_USR }}
+#     password: ${{ secrets.JFROG_ARTIFACTORY_CREDENTIALS_PSW }}
 
 updates:
   - package-ecosystem: "docker"
     directory: "/"
-    registries:
-      - tala-jfrog-repository
+#     registries:
+#       - tala-jfrog-repository
     schedule:
       interval: "daily"
     commit-message:
