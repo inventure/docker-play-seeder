@@ -91,17 +91,17 @@ Below are the various ways of generating images:
   ```
   Example:
   ```shell
-  docker manifest create talaengineering/play-dependencies-seed:play-2.8.20-sbt-1.9.7-scala-2.12.18-play-slick-3.0.4-java-8.0.382-amzn-debian-bullseye-20231009-slim-multiarch
-    --amend alice/play-dependencies-seed:play-2.8.20-sbt-1.9.7-scala-2.12.18-play-slick-3.0.4-java-8.0.382-amzn-debian-bullseye-20231009-slim-arm64
-    --amend sally/play-dependencies-seed:play-2.8.20-sbt-1.9.7-scala-2.12.18-play-slick-3.0.4-java-8.0.382-amzn-debian-bullseye-20231009-slim-amd64
+  docker manifest create talaengineering/play-dependencies-seed:play-2.8.20-sbt-1.9.7-scala-2.12.18-play-slick-3.0.4-java-8.0.392-amzn-debian-bullseye-20231009-slim-multiarch
+    --amend alice/play-dependencies-seed:play-2.8.20-sbt-1.9.7-scala-2.12.18-play-slick-3.0.4-java-8.0.392-amzn-debian-bullseye-20231009-slim-arm64
+    --amend sally/play-dependencies-seed:play-2.8.20-sbt-1.9.7-scala-2.12.18-play-slick-3.0.4-java-8.0.392-amzn-debian-bullseye-20231009-slim-amd64
   ```
 - Check the combined manifest
   ``shell
-  docker manifest inspect talaengineering/play-dependencies-seed:play-2.8.20-sbt-1.9.7-scala-2.12.18-play-slick-3.0.3-java-8.0.382-amzn-debian-bullseye-20231009-slim-multiarch
+  docker manifest inspect talaengineering/play-dependencies-seed:play-2.8.20-sbt-1.9.7-scala-2.12.18-play-slick-3.0.3-java-8.0.392-amzn-debian-bullseye-20231009-slim-multiarch
   ``
 - Push the combined manifest
   ``shell
-  docker manifest push talaengineering/play-dependencies-seed:play-2.8.20-sbt-1.9.7-scala-2.12.18-play-slick-3.0.3-java-8.0.382-amzn-debian-bullseye-20231009-slim-multiarch
+  docker manifest push talaengineering/play-dependencies-seed:play-2.8.20-sbt-1.9.7-scala-2.12.18-play-slick-3.0.3-java-8.0.392-amzn-debian-bullseye-20231009-slim-multiarch
   ``
 
 ### Notes
