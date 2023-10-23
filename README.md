@@ -41,7 +41,7 @@ Below are the various ways of generating images:
   [info] Loading settings for project root from dependencies.sbt,build.sbt ...
   [info] Set current project to play-docker-seeder (in build file:/Users/ivan/Code/env/inventure/apps/play-docker-seeder/)
   [info] ### Inquiring versions
-  Base Docker Image [debian:bullseye-20230725-slim] : debian:bullseye-20230725-slim
+  Base Docker Image [debian:bullseye-20231009-slim] : debian:bullseye-20231009-slim
   Play! version [2.8.17] : 2.8.17
   play-json version [2.8.2] : 2.8.2
   Scala version [2.12.18] : 2.12.18
@@ -50,7 +50,7 @@ Below are the various ways of generating images:
   Sbt version [1.9.7] :
   Docker registry [ivanoronee] :
   [info] Working with versions:
-  [info] - base-image => debian:bullseye-20230725-slim
+  [info] - base-image => debian:bullseye-20231009-slim
   [info] - play       => 2.8.17
   [info] - play-json  => 2.8.2
   [info] - scala      => 2.12.18
@@ -67,7 +67,7 @@ Below are the various ways of generating images:
   
 - Non interactive using custom values
   ```shell 
-  sbt "dockerSeed base-image debian:bullseye-20230725-slim play-version 2.8.20 scala-version 2.12.18 java-version 17.0.4-amzn play-slick-version 3.0.4 sbt-version 1.9.7 docker-registry funkychicken" 
+  sbt "dockerSeed base-image debian:bullseye-20231009-slim play-version 2.8.20 scala-version 2.12.18 java-version 17.0.4-amzn play-slick-version 3.0.4 sbt-version 1.9.7 docker-registry funkychicken" 
   ```
   
  - Non interactive with some custom values and some default values
@@ -91,17 +91,17 @@ Below are the various ways of generating images:
   ```
   Example:
   ```shell
-  docker manifest create talaengineering/play-dependencies-seed:play-2.8.20-sbt-1.9.7-scala-2.12.18-play-slick-3.0.4-java-8.0.382-amzn-debian-bullseye-20230725-slim-multiarch
-    --amend alice/play-dependencies-seed:play-2.8.20-sbt-1.9.7-scala-2.12.18-play-slick-3.0.4-java-8.0.382-amzn-debian-bullseye-20230725-slim-arm64
-    --amend sally/play-dependencies-seed:play-2.8.20-sbt-1.9.7-scala-2.12.18-play-slick-3.0.4-java-8.0.382-amzn-debian-bullseye-20230725-slim-amd64
+  docker manifest create talaengineering/play-dependencies-seed:play-2.8.20-sbt-1.9.7-scala-2.12.18-play-slick-3.0.4-java-8.0.382-amzn-debian-bullseye-20231009-slim-multiarch
+    --amend alice/play-dependencies-seed:play-2.8.20-sbt-1.9.7-scala-2.12.18-play-slick-3.0.4-java-8.0.382-amzn-debian-bullseye-20231009-slim-arm64
+    --amend sally/play-dependencies-seed:play-2.8.20-sbt-1.9.7-scala-2.12.18-play-slick-3.0.4-java-8.0.382-amzn-debian-bullseye-20231009-slim-amd64
   ```
 - Check the combined manifest
   ``shell
-  docker manifest inspect talaengineering/play-dependencies-seed:play-2.8.20-sbt-1.9.7-scala-2.12.18-play-slick-3.0.3-java-8.0.382-amzn-debian-bullseye-20230725-slim-multiarch
+  docker manifest inspect talaengineering/play-dependencies-seed:play-2.8.20-sbt-1.9.7-scala-2.12.18-play-slick-3.0.3-java-8.0.382-amzn-debian-bullseye-20231009-slim-multiarch
   ``
 - Push the combined manifest
   ``shell
-  docker manifest push talaengineering/play-dependencies-seed:play-2.8.20-sbt-1.9.7-scala-2.12.18-play-slick-3.0.3-java-8.0.382-amzn-debian-bullseye-20230725-slim-multiarch
+  docker manifest push talaengineering/play-dependencies-seed:play-2.8.20-sbt-1.9.7-scala-2.12.18-play-slick-3.0.3-java-8.0.382-amzn-debian-bullseye-20231009-slim-multiarch
   ``
 
 ### Notes
