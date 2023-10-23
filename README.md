@@ -11,7 +11,7 @@ Preliminary tests have shown that preemptively downloading and caching the above
 
 ### Usage
 
-You can use this project to generate Docker images containing cached versions of `play`, `play-json`, `play-slick`,
+You can use this project to generate Docker images containing cached versions of `play`, `play-slick`,
 `sbt`, `scala`, and `java` deployed to a Docker registry of your choice — you must have permissions to push to the 
 specified Docker registry.
 
@@ -43,7 +43,6 @@ Below are the various ways of generating images:
   [info] ### Inquiring versions
   Base Docker Image [debian:bullseye-20231009-slim] : debian:bullseye-20231009-slim
   Play! version [2.8.17] : 2.8.17
-  play-json version [2.8.2] : 2.8.2
   Scala version [2.12.18] : 2.12.18
   Java version [17.0.4-amzn] : 17.0.4-amzn
   Play-Slick version [3.0.4] :
@@ -52,7 +51,6 @@ Below are the various ways of generating images:
   [info] Working with versions:
   [info] - base-image => debian:bullseye-20231009-slim
   [info] - play       => 2.8.17
-  [info] - play-json  => 2.8.2
   [info] - scala      => 2.12.18
   [info] - java       => 17.0.4-amzn
   [info] - play-slick => 3.0.4
@@ -105,14 +103,6 @@ Below are the various ways of generating images:
   ``
 
 ### Notes
-- Choosing the `play-json` version
-  
-  While this tool allows you to choose the `play-json` library independent of the Play! framework version,
-  we strongly recommend using the same version used by the framework. You could either inspect the dependency
-  using `sbt dependencyTree` or get this information from Maven Central
-  ([example](https://mvnrepository.com/artifact/com.typesafe.play/play_2.13/2.8.17)). See illustration below:
-  ![image](docs/images/play-json-dependency.png)
-  
 - When pushing to Dockerhub, the repository that will be pushed to is `[specified registry]/play-dependencies-seed`. If
 you encounter permission problems pushing ensure the following is in order:
   - If the repository `play-dependencies-seed` does not already exist in the target account, ensure that you have 
