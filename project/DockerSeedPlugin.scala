@@ -281,7 +281,7 @@ object DockerSeedPlugin extends AutoPlugin {
       s"scala-$scalaVersion-" +
       s"play-slick-$playSlickVersion-" +
       s"java-$javaVersion-" +
-      s"$baseImage"
+      s"$baseImage-test-regular"
   }
 
   def readVersion(default: String, prompt: String, useDefault: Boolean, commandLineVersion: Option[String]): String = {
