@@ -49,10 +49,10 @@ Below are the various ways of generating images:
   Sbt version [1.9.8] :
   Docker registry [ivanoronee] :
   [info] Working with versions:
-  [info] - base-image => debian:bullseye-20231120-slim
+  [info] - base-image => debian:bullseye-20240110-slim
   [info] - play       => 2.8.21
-  [info] - scala      => 2.12.18
-  [info] - java       => 17.0.4-amzn
+  [info] - scala      => 2.13.12
+  [info] - java       => 11.0.21-amzn
   [info] - play-slick => 5.1.0
   [info] - sbt        => 1.9.8
   [info] - registry   => interruptingCow
@@ -65,7 +65,7 @@ Below are the various ways of generating images:
   
 - Non interactive using custom values
   ```shell 
-  sbt "dockerSeed base-image debian:bullseye-20231120-slim play-version 2.8.21 scala-version 2.12.18 java-version 17.0.4-amzn play-slick-version 5.1.0 sbt-version 1.9.8 docker-registry funkychicken" 
+  sbt "dockerSeed base-image debian:bullseye-20240110-slim play-version 2.8.21 scala-version 2.13.12 java-version 17.0.4-amzn play-slick-version 5.1.0 sbt-version 1.9.8 docker-registry funkychicken" 
   ```
   
  - Non interactive with some custom values and some default values
@@ -89,9 +89,9 @@ Below are the various ways of generating images:
   ```
   Example:
   ```shell
-  docker manifest create talaengineering/play-dependencies-seed:play-2.8.21-sbt-1.9.8-scala-2.12.18-play-slick-5.1.0-java-8.0.392-amzn-debian-bullseye-20231120-slim-multiarch
-    --amend alice/play-dependencies-seed:play-2.8.21-sbt-1.9.8-scala-2.12.18-play-slick-5.1.0-java-8.0.392-amzn-debian-bullseye-20231120-slim-arm64
-    --amend sally/play-dependencies-seed:play-2.8.21-sbt-1.9.8-scala-2.12.18-play-slick-5.1.0-java-8.0.392-amzn-debian-bullseye-20231120-slim-amd64
+  docker manifest create talaengineering/play-dependencies-seed:play-2.8.21-sbt-1.9.8-scala-2.13.12-play-slick-5.1.0-java-11.0.21-amzn-debian-bullseye-20240110-slim-multiarch
+    --amend alice/play-dependencies-seed:play-2.8.21-sbt-1.9.8-scala-2.13.12-play-slick-5.1.0-java-11.0.21-amzn-debian-bullseye-20240110-slim-arm64
+    --amend sally/play-dependencies-seed:play-2.8.21-sbt-1.9.8-scala-2.13.12-play-slick-5.1.0-java-11.0.21-amzn-debian-bullseye-20240110-slim-amd64
   ```
 - Check the combined manifest
   ``shell
