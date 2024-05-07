@@ -41,20 +41,20 @@ Below are the various ways of generating images:
   [info] Loading settings for project root from dependencies.sbt,build.sbt ...
   [info] Set current project to play-docker-seeder (in build file:/Users/ivan/Code/env/inventure/apps/play-docker-seeder/)
   [info] ### Inquiring versions
-  Base Docker Image [debian:bullseye-20240311-slim] : debian:bullseye-20240311-slim
+  Base Docker Image [debian:bullseye-20240423-slim] : debian:bullseye-20240423-slim
   Play! version [2.8.21] : 2.8.21
-  Scala version [2.13.13] : 2.13.13
-  Java version [11.0.22-amzn] : 11.0.22-amzn
-  Play-Slick version [5.1.0] :
-  Sbt version [1.9.9] :
+  Scala version [2.13.14] : 2.13.14
+  Java version [11.0.23-amzn] : 11.0.23-amzn
+  Play-Slick version [5.3.0] :
+  Sbt version [1.10.0] :
   Docker registry [ivanoronee] :
   [info] Working with versions:
   [info] - base-image => debian:bullseye-20240110-slim
   [info] - play       => 2.8.21
-  [info] - scala      => 2.13.13
-  [info] - java       => 11.0.22-amzn
-  [info] - play-slick => 5.1.0
-  [info] - sbt        => 1.9.9
+  [info] - scala      => 2.13.14
+  [info] - java       => 11.0.23-amzn
+  [info] - play-slick => 5.3.0
+  [info] - sbt        => 1.10.0
   [info] - registry   => interruptingCow
   [info] ### Updating dependencies
   [info] ### Updating plugins
@@ -65,12 +65,12 @@ Below are the various ways of generating images:
   
 - Non interactive using custom values
   ```shell 
-  sbt "dockerSeed base-image debian:bullseye-20240311-slim play-version 2.8.21 scala-version 2.13.13 java-version 11.0.22-amzn play-slick-version 5.1.0 sbt-version 1.9.9 docker-registry funkychicken" 
+  sbt "dockerSeed base-image debian:bullseye-20240423-slim play-version 2.8.21 scala-version 2.13.14 java-version 11.0.23-amzn play-slick-version 5.3.0 sbt-version 1.10.0 docker-registry funkychicken" 
   ```
   
  - Non interactive with some custom values and some default values
    ```shell 
-   sbt "dockerSeed with-defaults sbt-version 1.9.9 docker-registry monkeybusiness"
+   sbt "dockerSeed with-defaults sbt-version 1.10.0 docker-registry monkeybusiness"
    ``` 
    
  When the command returns, an image will be deployed to the specified docker registry. Below is the format of the image
@@ -89,17 +89,17 @@ Below are the various ways of generating images:
   ```
   Example:
   ```shell
-  docker manifest create talaengineering/play-dependencies-seed:play-2.8.21-sbt-1.9.9-scala-2.13.13-play-slick-5.1.0-java-11.0.22-amzn-debian-bullseye-20240311-slim-multiarch
-    --amend alice/play-dependencies-seed:play-2.8.21-sbt-1.9.9-scala-2.13.13-play-slick-5.1.0-java-11.0.22-amzn-debian-bullseye-20240311-slim-arm64
-    --amend sally/play-dependencies-seed:play-2.8.21-sbt-1.9.9-scala-2.13.13-play-slick-5.1.0-java-11.0.22-amzn-debian-bullseye-20240311-slim-amd64
+  docker manifest create talaengineering/play-dependencies-seed:play-2.8.21-sbt-1.10.0-scala-2.13.14-play-slick-5.3.0-java-11.0.23-amzn-debian-bullseye-20240423-slim-multiarch
+    --amend alice/play-dependencies-seed:play-2.8.21-sbt-1.10.0-scala-2.13.14-play-slick-5.3.0-java-11.0.23-amzn-debian-bullseye-20240423-slim-arm64
+    --amend sally/play-dependencies-seed:play-2.8.21-sbt-1.10.0-scala-2.13.14-play-slick-5.3.0-java-11.0.23-amzn-debian-bullseye-20240423-slim-amd64
   ```
 - Check the combined manifest
   ``shell
-  docker manifest inspect talaengineering/play-dependencies-seed:play-2.8.21-sbt-1.9.9-scala-2.13.13-play-slick-5.1.0-java-11.0.22-amzn-debian-bullseye-20240311-slim-multiarch
+  docker manifest inspect talaengineering/play-dependencies-seed:play-2.8.21-sbt-1.10.0-scala-2.13.14-play-slick-5.3.0-java-11.0.23-amzn-debian-bullseye-20240423-slim-multiarch
   ``
 - Push the combined manifest
   ``shell
-  docker manifest push talaengineering/play-dependencies-seed:play-2.8.21-sbt-1.9.9-scala-2.13.13-play-slick-5.1.0-java-11.0.22-amzn-debian-bullseye-20240311-slim-multiarch
+  docker manifest push talaengineering/play-dependencies-seed:play-2.8.21-sbt-1.10.0-scala-2.13.14-play-slick-5.3.0-java-11.0.23-amzn-debian-bullseye-20240423-slim-multiarch
   ``
 
 ### Notes
