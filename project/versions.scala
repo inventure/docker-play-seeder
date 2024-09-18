@@ -4,5 +4,5 @@ object versions {
   val playVersion = "2.9.5"
   val playSlickVersion = "5.3.1"
   val scalaVersion = "2.13.14"
-  val sbtVersion = "1.10.1" //make sure to also bump build.properties and sbt-init.sh
+  val sbtVersion = "1.10.2" //make sure to also bump build.properties and sbt-init.sh
 }
