@@ -1,11 +1,16 @@
 ARG BASE_IMAGE
 FROM $BASE_IMAGE AS compile
 
-# Install ZIP and cURL
-RUN apt-get update && \
-    apt-get install -y zip unzip curl git && \
-    rm -rf /var/lib/apt/lists/* && \
-    rm -rf /tmp/*
+# Install commonly used packages
+RUN apt-get update
+RUN apt-get install -y zip
+RUN apt-get install -y unzip
+RUN apt-get install -y curl
+RUN apt-get install -y git
+
+# Cleanup temp files
+RUN rm -rf /var/lib/apt/lists/*
+RUN rm -rf /tmp/*
 
 # Download SDKMAN
 ENV SDKMAN_DIR="/usr/local/sdkman"
