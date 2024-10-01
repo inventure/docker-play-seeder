@@ -7,5 +7,6 @@ ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" 
 // Exclude the common ones from the base Docker image as they will be added back when compiling the application
 ThisBuild / excludeDependencies ++= Seq(
   ExclusionRule("org.apache.ant", "ant"),
-  ExclusionRule("org.apache.commons", "commons-compress")
+  ExclusionRule("org.apache.commons", "commons-compress"),
+  ExclusionRule("com.google.protobuf", "protobuf-java")
 )
