@@ -12,6 +12,15 @@ RUN apt-get install -y git
 RUN rm -rf /var/lib/apt/lists/*
 RUN rm -rf /tmp/*
 
+# Create the default user
+ARG USERNAME=scalaplay
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+RUN groupadd --gid $USER_GID $USERNAME && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME
+
+# Set the default user
+USER $USERNAME
+
 # Download SDKMAN
 ENV SDKMAN_DIR="/usr/local/sdkman"
 RUN curl -s "https://get.sdkman.io" | bash
