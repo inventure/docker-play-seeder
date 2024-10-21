@@ -44,7 +44,7 @@ Below are the various ways of generating images:
   Base Docker Image [debian:bullseye-20240926-slim] : debian:bullseye-20240926-slim
   Play! version [2.9.5] : 2.9.5
   Scala version [2.13.15] : 2.13.15
-  Java version [11.0.24-amzn] : 11.0.24-amzn
+  Java version [11.0.25-amzn] : 11.0.25-amzn
   Play-Slick version [5.3.1] :
   Sbt version [1.10.3] :
   Docker registry [ivanoronee] :
@@ -52,7 +52,7 @@ Below are the various ways of generating images:
   [info] - base-image => debian:bullseye-20240926-slim
   [info] - play       => 2.9.5
   [info] - scala      => 2.13.15
-  [info] - java       => 11.0.24-amzn
+  [info] - java       => 11.0.25-amzn
   [info] - play-slick => 5.3.1
   [info] - sbt        => 1.10.3
   [info] - registry   => interruptingCow
@@ -65,7 +65,7 @@ Below are the various ways of generating images:
   
 - Non interactive using custom values
   ```shell 
-  sbt "dockerSeed base-image debian:bullseye-20240926-slim play-version 2.9.5 scala-version 2.13.15 java-version 11.0.24-amzn play-slick-version 5.3.1 sbt-version 1.10.3 docker-registry funkychicken" 
+  sbt "dockerSeed base-image debian:bullseye-20240926-slim play-version 2.9.5 scala-version 2.13.15 java-version 11.0.25-amzn play-slick-version 5.3.1 sbt-version 1.10.3 docker-registry funkychicken" 
   ```
   
  - Non interactive with some custom values and some default values
@@ -89,9 +89,9 @@ Below are the various ways of generating images:
   ```
   Example:
   ```shell
-  docker manifest create talaengineering/play-dependencies-seed:play-2.9.5-sbt-1.10.3-scala-2.13.15-play-slick-5.3.1-java-11.0.24-amzn-debian-bullseye-20240926-slim-multiarch
-    --amend alice/play-dependencies-seed:play-2.9.5-sbt-1.10.3-scala-2.13.15-play-slick-5.3.1-java-11.0.24-amzn-debian-bullseye-20240926-slim-arm64
-    --amend sally/play-dependencies-seed:play-2.9.5-sbt-1.10.3-scala-2.13.15-play-slick-5.3.1-java-11.0.24-amzn-debian-bullseye-20240926-slim-amd64
+  docker manifest create talaengineering/play-dependencies-seed:play-2.9.5-sbt-1.10.3-scala-2.13.15-play-slick-5.3.1-java-11.0.25-amzn-debian-bullseye-20240926-slim-multiarch
+    --amend alice/play-dependencies-seed:play-2.9.5-sbt-1.10.3-scala-2.13.15-play-slick-5.3.1-java-11.0.25-amzn-debian-bullseye-20240926-slim-arm64
+    --amend sally/play-dependencies-seed:play-2.9.5-sbt-1.10.3-scala-2.13.15-play-slick-5.3.1-java-11.0.25-amzn-debian-bullseye-20240926-slim-amd64
   ```
 - Check the combined manifest
   ``shell
