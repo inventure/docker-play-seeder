@@ -35,6 +35,9 @@ object DockerSeedPlugin extends AutoPlugin {
       val commandLineSbtVersion = AttributeKey[Option[String]]("command-line-sbt-version")
       val desiredSbtVersion = AttributeKey[String]("desired-sbt-version")
 
+      val commandLineAddOsSuffix = AttributeKey[Option[String]]("command-line-add-os-suffix")
+      val desiredAddOsSuffix = AttributeKey[String]("desired-add-os-suffix")
+
       val commandLineDockerRegistry = AttributeKey[Option[String]]("command-line-registry")
       val desiredDockerRegistry = AttributeKey[String]("desired-docker-registry")
 
@@ -64,6 +67,10 @@ object DockerSeedPlugin extends AutoPlugin {
         (Space ~> token("sbt-version") ~> Space ~> token(StringBasic, "<sbt version>"))
           .map(ParseResult.SbtVersion)
 
+      private[this] val AddOsSuffix: Parser[ParseResult] =
+        (Space ~> token("add-os-suffix") ~> Space ~> token(StringBasic, "<add-os-suffix>"))
+          .map(ParseResult.AddOsSuffix)
+
       private[this] val DockerRegistry: Parser[ParseResult] =
         (Space ~> token("docker-registry") ~> Space ~> token(StringBasic, "<docker-registry>"))
           .map(ParseResult.DockerRegistry)
@@ -85,6 +92,8 @@ object DockerSeedPlugin extends AutoPlugin {
 
         final case class SbtVersion(value: String) extends ParseResult
 
+        final case class AddOsSuffix(value: String) extends ParseResult
+
         final case class DockerRegistry(value: String) extends ParseResult
 
         case object WithDefaults extends ParseResult
@@ -99,6 +108,7 @@ object DockerSeedPlugin extends AutoPlugin {
           | playSlickVersion
           | WithDefaults
           | SbtVersion
+          | AddOsSuffix
           | DockerRegistry
         ).*
 
@@ -111,6 +121,7 @@ object DockerSeedPlugin extends AutoPlugin {
           .put(commandLineJavaVersion, args.collectFirst { case ParseResult.JavaVersion(value) => value })
           .put(commandLinePlaySlickVersion, args.collectFirst { case ParseResult.playSlickVersion(value) => value })
           .put(commandLineSbtVersion, args.collectFirst { case ParseResult.SbtVersion(value) => value })
+          .put(commandLineAddOsSuffix, args.collectFirst { case ParseResult.AddOsSuffix(value) => value })
           .put(commandLineDockerRegistry, args.collectFirst { case ParseResult.DockerRegistry(value) => value })
 
         Function.chain(
@@ -131,17 +142,19 @@ object DockerSeedPlugin extends AutoPlugin {
   private val inquireVersions = { state: State =>
     import versions.*
     state.log.info("### Inquiring versions")
+    val defaultAddOsSuffix = "y" // for "yes"
     val useDefs = state.get(useDefaults).getOrElse(false)
     val base = readVersion(baseImage, "Base Docker Image [%s] : ", useDefs, state.get(commandLineBaseImage).flatten)
     val play = readVersion(playVersion, "Play! version [%s] : ", useDefs, state.get(commandLinePlayVersion).flatten)
     val scala = readVersion(scalaVersion, "Scala version [%s] : ", useDefs, state.get(commandLineScalaVersion).flatten)
     val java = readVersion(javaVersion, "Java version [%s] : ", useDefs, state.get(commandLineJavaVersion).flatten)
-    val slick = readVersion(playSlickVersion, "Play-Slick version [%s] : ", useDefs, state.get(
-      commandLinePlaySlickVersion).flatten)
+    val slick = readVersion(playSlickVersion, "Play-Slick version [%s] : ", useDefs,
+      state.get(commandLinePlaySlickVersion).flatten)
     val sbt = readVersion(sbtVersion, "Sbt version [%s] : ", useDefs, state.get(commandLineSbtVersion).flatten)
-    val registry = readVersion(
-      docker.registry, "Docker registry [%s] : ", useDefs, state.get(commandLineDockerRegistry).flatten
-    )
+    val addOsSuffix = readVersion(defaultAddOsSuffix, "Add os.arch suffix to image name (y/n) [%s] : ", useDefs,
+      state.get(commandLineAddOsSuffix).flatten)
+    val registry = readVersion(docker.registry, "Docker registry [%s] : ", useDefs,
+      state.get(commandLineDockerRegistry).flatten)
 
     val newState = state
       .put(desiredBaseImage, base)
@@ -150,6 +163,7 @@ object DockerSeedPlugin extends AutoPlugin {
       .put(desiredJavaVersion, java)
       .put(desiredPlaySlickVersion, slick)
       .put(desiredSbtVersion, sbt)
+      .put(desiredAddOsSuffix, addOsSuffix)
       .put(desiredDockerRegistry, registry)
 
     newState.log.info(
@@ -267,8 +281,11 @@ object DockerSeedPlugin extends AutoPlugin {
     val scalaVersion = getAttributeKey(desiredScalaVersion)
     val javaVersion = getAttributeKey(desiredJavaVersion)
     val registry = getAttributeKey(desiredDockerRegistry)
-
-    Seq(
+    val addOsSuffix = getAttributeKey(desiredAddOsSuffix).toLowerCase match {
+      case "y" | "yes" => osArch
+      case _ => None
+    }
+    val version = Seq(
       Some(s"play-$playVersion"),
       Some(s"sbt-$sbtVersion"),
       Some(s"scala-$scalaVersion"),
@@ -278,13 +295,7 @@ object DockerSeedPlugin extends AutoPlugin {
       osArch
     ).flatten.mkString("-")
 
-    s"$registry/play-dependencies-seed:" +
-      s"play-$playVersion-" +
-      s"sbt-$sbtVersion-" +
-      s"scala-$scalaVersion-" +
-      s"play-slick-$playSlickVersion-" +
-      s"java-$javaVersion-" +
-      s"$baseImage"
+    s"$registry/play-dependencies-seed:$version"
   }
 
   def readVersion(default: String, prompt: String, useDefault: Boolean, commandLineVersion: Option[String]): String = {
