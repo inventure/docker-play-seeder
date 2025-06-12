@@ -312,7 +312,6 @@ object DockerSeedPlugin extends AutoPlugin {
     val customTag = getAttributeKey(desiredDockerImageTag).trim
     val imageTag = if (customTag.isBlank) defaultTag else customTag
 
-
     s"$registry/play-dependencies-seed:$imageTag"
   }
 
