@@ -4,9 +4,9 @@ import scala.io.Source
 import scala.sys.process.{ProcessBuilder, ProcessLogger, stringToProcess}
 import scala.util.{Failure, Try}
 
-import sbt.Keys._
-import sbt._
-import sbt.complete.DefaultParsers._
+import sbt.*
+import sbt.Keys.*
+import sbt.complete.DefaultParsers.*
 import sbt.complete.Parser
 
 object DockerSeedPlugin extends AutoPlugin {
@@ -124,10 +124,12 @@ object DockerSeedPlugin extends AutoPlugin {
 
   }
 
-  import autoImport.DockerSeedKeys._
+  import autoImport.DockerSeedKeys.*
+
+  private val osArch: Option[String] = Option(System.getProperty("os.arch"))
 
   private val inquireVersions = { state: State =>
-    import versions._
+    import versions.*
     state.log.info("### Inquiring versions")
     val useDefs = state.get(useDefaults).getOrElse(false)
     val base = readVersion(baseImage, "Base Docker Image [%s] : ", useDefs, state.get(commandLineBaseImage).flatten)
@@ -201,7 +203,7 @@ object DockerSeedPlugin extends AutoPlugin {
   }
 
   private val runDockerBuild = { state: State =>
-    state.log.info("### Building docker image")
+    state.log.info(s"### Building docker image for os.arch '${osArch.mkString}'")
     val log: ProcessLogger = processLogger(state)
     val imageTag: String = getDockerImageTag(state)
     val imageName: String = getAttributeKey(desiredBaseImage)(state)
@@ -265,6 +267,16 @@ object DockerSeedPlugin extends AutoPlugin {
     val scalaVersion = getAttributeKey(desiredScalaVersion)
     val javaVersion = getAttributeKey(desiredJavaVersion)
     val registry = getAttributeKey(desiredDockerRegistry)
+
+    Seq(
+      Some(s"play-$playVersion"),
+      Some(s"sbt-$sbtVersion"),
+      Some(s"scala-$scalaVersion"),
+      Some(s"play-slick-$playSlickVersion"),
+      Some(s"java-$javaVersion"),
+      Some(s"$baseImage"),
+      osArch
+    ).flatten.mkString("-")
 
     s"$registry/play-dependencies-seed:" +
       s"play-$playVersion-" +
