@@ -41,6 +41,9 @@ object DockerSeedPlugin extends AutoPlugin {
       val commandLineDockerRegistry = AttributeKey[Option[String]]("command-line-registry")
       val desiredDockerRegistry = AttributeKey[String]("desired-docker-registry")
 
+      val commandLineImageTag = AttributeKey[Option[String]]("command-line-image-tag")
+      val desiredDockerImageTag = AttributeKey[String]("desired-image-tag")
+
       private lazy val dockerSeedCommandKey = "dockerSeed"
 
       private[this] sealed abstract class ParseResult extends Product with Serializable
@@ -75,6 +78,10 @@ object DockerSeedPlugin extends AutoPlugin {
         (Space ~> token("docker-registry") ~> Space ~> token(StringBasic, "<docker-registry>"))
           .map(ParseResult.DockerRegistry)
 
+      private[this] val ImageTag: Parser[ParseResult] =
+        (Space ~> token("image-tag") ~> Space ~> token(StringBasic, "<image-tag>"))
+          .map(ParseResult.ImageTag)
+
       private[this] val WithDefaults: Parser[ParseResult] =
         (Space ~> token("with-defaults")) ^^^ ParseResult.WithDefaults
 
@@ -96,6 +103,8 @@ object DockerSeedPlugin extends AutoPlugin {
 
         final case class DockerRegistry(value: String) extends ParseResult
 
+        final case class ImageTag(value: String) extends ParseResult
+
         case object WithDefaults extends ParseResult
 
       }
@@ -110,6 +119,7 @@ object DockerSeedPlugin extends AutoPlugin {
           | SbtVersion
           | AddOsSuffix
           | DockerRegistry
+          | ImageTag
         ).*
 
       val dockerSeedCommand: Command = Command(dockerSeedCommandKey)(_ => dockerSeedParser) { (st, args) =>
@@ -123,6 +133,7 @@ object DockerSeedPlugin extends AutoPlugin {
           .put(commandLineSbtVersion, args.collectFirst { case ParseResult.SbtVersion(value) => value })
           .put(commandLineAddOsSuffix, args.collectFirst { case ParseResult.AddOsSuffix(value) => value })
           .put(commandLineDockerRegistry, args.collectFirst { case ParseResult.DockerRegistry(value) => value })
+          .put(commandLineImageTag, args.collectFirst { case ParseResult.ImageTag(value) => value })
 
         Function.chain(
           Seq(
@@ -155,6 +166,8 @@ object DockerSeedPlugin extends AutoPlugin {
       state.get(commandLineAddOsSuffix).flatten)
     val registry = readVersion(docker.registry, "Docker registry [%s] : ", useDefs,
       state.get(commandLineDockerRegistry).flatten)
+    val imageTag = readVersion("", "Image tag (leave blank to use default) : ", useDefs,
+      state.get(commandLineImageTag).flatten)
 
     val newState = state
       .put(desiredBaseImage, base)
@@ -165,16 +178,18 @@ object DockerSeedPlugin extends AutoPlugin {
       .put(desiredSbtVersion, sbt)
       .put(desiredAddOsSuffix, addOsSuffix)
       .put(desiredDockerRegistry, registry)
+      .put(desiredDockerImageTag, imageTag)
 
     newState.log.info(
       s"""Working with versions:
-         |- base-image => $base
-         |- play       => $play
-         |- scala      => $scala
-         |- java       => $java
-         |- play-slick => $slick
-         |- sbt        => $sbt
-         |- registry   => $registry
+         |- base-image       => $base
+         |- play             => $play
+         |- scala            => $scala
+         |- java             => $java
+         |- play-slick       => $slick
+         |- sbt              => $sbt
+         |- registry         => $registry
+         |- custom image tag => $imageTag
          |""".stripMargin)
 
     newState
@@ -285,17 +300,20 @@ object DockerSeedPlugin extends AutoPlugin {
       case "y" | "yes" => osArch
       case _ => None
     }
-    val version = Seq(
+    val defaultTag = Seq(
       Some(s"play-$playVersion"),
       Some(s"sbt-$sbtVersion"),
       Some(s"scala-$scalaVersion"),
       Some(s"play-slick-$playSlickVersion"),
       Some(s"java-$javaVersion"),
       Some(s"$baseImage"),
-      osArch
+      addOsSuffix
     ).flatten.mkString("-")
+    val customTag = getAttributeKey(desiredDockerImageTag).trim
+    val imageTag = if (customTag.isBlank) defaultTag else customTag
 
-    s"$registry/play-dependencies-seed:$version"
+
+    s"$registry/play-dependencies-seed:$imageTag"
   }
 
   def readVersion(default: String, prompt: String, useDefault: Boolean, commandLineVersion: Option[String]): String = {
