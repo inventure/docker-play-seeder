@@ -41,25 +41,29 @@ Below are the various ways of generating images:
   [info] Loading settings for project root from dependencies.sbt,build.sbt ...
   [info] Set current project to play-docker-seeder (in build file:/Users/ivan/Code/env/inventure/apps/play-docker-seeder/)
   [info] ### Inquiring versions
-  Base Docker Image [debian:bullseye-20250610-slim] : debian:bullseye-20250610-slim
-  Play! version [2.9.7] : 2.9.7
-  Scala version [2.13.16] : 2.13.16
-  Java version [21.0.7-amzn] : 21.0.7-amzn
+  Base Docker Image [debian:bullseye-20250610-slim] :
+  Play! version [2.9.7] :
+  Scala version [2.13.16] :
+  Java version [21.0.7-amzn] :
   Play-Slick version [5.4.0] :
   Sbt version [1.11.2] :
-  Docker registry [ivanoronee] :
+  Add os.arch suffix to image name (y/n) [y] :
+  Docker registry [talaengineering] : myregistry
+  Image tag (leave blank to use default) :
   [info] Working with versions:
-  [info] - base-image => debian:bullseye-20250610-slim
-  [info] - play       => 2.9.7
-  [info] - scala      => 2.13.16
-  [info] - java       => 21.0.7-amzn
-  [info] - play-slick => 5.4.0
-  [info] - sbt        => 1.11.2
-  [info] - registry   => interruptingCow
+  [info] - base-image       => debian:bullseye-20250610-slim
+  [info] - play             => 2.9.7
+  [info] - scala            => 2.13.16
+  [info] - java             => 21.0.7-amzn
+  [info] - play-slick       => 5.4.0
+  [info] - sbt              => 1.11.2
+  [info] - registry         => talalawrenceasrikin
+  [info] - custom image tag =>
   [info] ### Updating dependencies
   [info] ### Updating plugins
   [info] ### Updating build properties
-  [info] ### Building docker image
+  [info] ### Updating sbt-init.sh
+  [info] ### Building docker image for os.arch 'amd64'
   [info] Sending build context to Docker daemon  355.3kB
   ```
   
@@ -75,7 +79,7 @@ Below are the various ways of generating images:
    
  When the command returns, an image will be deployed to the specified docker registry. Below is the format of the image
  ``` 
- s"$registry/play-dependencies-seed:$playVersion-sbt-$sbtVersion-scala-$scalaVersion-play-slick-$playSlickVersion-java-$javaVersion"
+ s"$registry/play-dependencies-seed:$playVersion-sbt-$sbtVersion-scala-$scalaVersion-play-slick-$playSlickVersion-java-$javaVersion-$osArch"
  ```
 
 ### Combining multiple images into a single multiarch repository
@@ -90,7 +94,7 @@ Below are the various ways of generating images:
   Example:
   ```shell
   docker manifest create talaengineering/play-dependencies-seed:play-2.9.7-sbt-1.11.2-scala-2.13.16-play-slick-5.4.0-java-21.0.7-amzn-debian-bullseye-20250407-slim-multiarch
-    --amend alice/play-dependencies-seed:play-2.9.7-sbt-1.11.2-scala-2.13.16-play-slick-5.4.0-java-21.0.7-amzn-debian-bullseye-20250407-slim-arm64
+    --amend alice/play-dependencies-seed:play-2.9.7-sbt-1.11.2-scala-2.13.16-play-slick-5.4.0-java-21.0.7-amzn-debian-bullseye-20250407-slim-aarch64
     --amend sally/play-dependencies-seed:play-2.9.7-sbt-1.11.2-scala-2.13.16-play-slick-5.4.0-java-21.0.7-amzn-debian-bullseye-20250407-slim-amd64
   ```
 - Check the combined manifest
