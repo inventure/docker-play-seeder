@@ -41,22 +41,22 @@ Below are the various ways of generating images:
   [info] Loading settings for project root from dependencies.sbt,build.sbt ...
   [info] Set current project to play-docker-seeder (in build file:/Users/ivan/Code/env/inventure/apps/play-docker-seeder/)
   [info] ### Inquiring versions
-  Base Docker Image [debian:bullseye-20250630-slim] :
+  Base Docker Image [debian:bullseye-20250908-slim] :
   Play! version [2.9.8] :
   Scala version [2.13.16] :
-  Java version [21.0.7-amzn] :
+  Java version [21.0.8-amzn] :
   Play-Slick version [5.4.0] :
-  Sbt version [1.11.3] :
+  Sbt version [1.11.6] :
   Add os.arch suffix to image name (y/n) [y] :
   Docker registry [talaengineering] : myregistry
   Image tag (leave blank to use default) :
   [info] Working with versions:
-  [info] - base-image       => debian:bullseye-20250630-slim
+  [info] - base-image       => debian:bullseye-20250908-slim
   [info] - play             => 2.9.8
   [info] - scala            => 2.13.16
-  [info] - java             => 21.0.7-amzn
+  [info] - java             => 21.0.8-amzn
   [info] - play-slick       => 5.4.0
-  [info] - sbt              => 1.11.3
+  [info] - sbt              => 1.11.6
   [info] - registry         => talalawrenceasrikin
   [info] - custom image tag =>
   [info] ### Updating dependencies
@@ -69,12 +69,12 @@ Below are the various ways of generating images:
   
 - Non interactive using custom values
   ```shell 
-  sbt "dockerSeed base-image debian:bullseye-20250630-slim play-version 2.9.8 scala-version 2.13.16 java-version 21.0.7-amzn play-slick-version 5.4.0 sbt-version 1.11.3 docker-registry funkychicken" 
+  sbt "dockerSeed base-image debian:bullseye-20250908-slim play-version 2.9.8 scala-version 2.13.16 java-version 21.0.8-amzn play-slick-version 5.4.0 sbt-version 1.11.6 docker-registry funkychicken" 
   ```
   
  - Non interactive with some custom values and some default values
    ```shell 
-   sbt "dockerSeed with-defaults sbt-version 1.11.3 docker-registry monkeybusiness"
+   sbt "dockerSeed with-defaults sbt-version 1.11.6 docker-registry monkeybusiness"
    ``` 
    
  When the command returns, an image will be deployed to the specified docker registry. Below is the format of the image
@@ -93,17 +93,17 @@ Below are the various ways of generating images:
   ```
   Example:
   ```shell
-  docker manifest create talaengineering/play-dependencies-seed:play-2.9.8-sbt-1.11.3-scala-2.13.16-play-slick-5.4.0-java-21.0.7-amzn-debian-bullseye-20250407-slim-multiarch
-    --amend alice/play-dependencies-seed:play-2.9.8-sbt-1.11.3-scala-2.13.16-play-slick-5.4.0-java-21.0.7-amzn-debian-bullseye-20250407-slim-aarch64
-    --amend sally/play-dependencies-seed:play-2.9.8-sbt-1.11.3-scala-2.13.16-play-slick-5.4.0-java-21.0.7-amzn-debian-bullseye-20250407-slim-amd64
+  docker manifest create talaengineering/play-dependencies-seed:play-2.9.8-sbt-1.11.6-scala-2.13.16-play-slick-5.4.0-java-21.0.8-amzn-debian-bullseye-20250407-slim-multiarch
+    --amend alice/play-dependencies-seed:play-2.9.8-sbt-1.11.6-scala-2.13.16-play-slick-5.4.0-java-21.0.8-amzn-debian-bullseye-20250407-slim-aarch64
+    --amend sally/play-dependencies-seed:play-2.9.8-sbt-1.11.6-scala-2.13.16-play-slick-5.4.0-java-21.0.8-amzn-debian-bullseye-20250407-slim-amd64
   ```
 - Check the combined manifest
   ``shell
-  docker manifest inspect talaengineering/play-dependencies-seed:play-2.9.4-sbt-1.11.3-scala-2.13.16-play-slick-5.4.0-java-21.0.7-amzn-debian-bullseye-20240701-slim-multiarch
+  docker manifest inspect talaengineering/play-dependencies-seed:play-2.9.4-sbt-1.11.6-scala-2.13.16-play-slick-5.4.0-java-21.0.8-amzn-debian-bullseye-20240701-slim-multiarch
   ``
 - Push the combined manifest
   ``shell
-  docker manifest push talaengineering/play-dependencies-seed:play-2.9.4-sbt-1.11.3-scala-2.13.16-play-slick-5.4.0-java-21.0.7-amzn-debian-bullseye-20240701-slim-multiarch
+  docker manifest push talaengineering/play-dependencies-seed:play-2.9.4-sbt-1.11.6-scala-2.13.16-play-slick-5.4.0-java-21.0.8-amzn-debian-bullseye-20240701-slim-multiarch
   ``
 
 ### Notes
