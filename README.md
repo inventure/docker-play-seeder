@@ -42,7 +42,7 @@ Below are the various ways of generating images:
   [info] Set current project to play-docker-seeder (in build file:/Users/ivan/Code/env/inventure/apps/play-docker-seeder/)
   [info] ### Inquiring versions
   Base Docker Image [debian:bullseye-20250908-slim] :
-  Play! version [2.9.8] :
+  Play! version [2.9.9] :
   Scala version [2.13.16] :
   Java version [21.0.8-amzn] :
   Play-Slick version [5.4.0] :
@@ -52,7 +52,7 @@ Below are the various ways of generating images:
   Image tag (leave blank to use default) :
   [info] Working with versions:
   [info] - base-image       => debian:bullseye-20250908-slim
-  [info] - play             => 2.9.8
+  [info] - play             => 2.9.9
   [info] - scala            => 2.13.16
   [info] - java             => 21.0.8-amzn
   [info] - play-slick       => 5.4.0
@@ -69,7 +69,7 @@ Below are the various ways of generating images:
   
 - Non interactive using custom values
   ```shell 
-  sbt "dockerSeed base-image debian:bullseye-20250908-slim play-version 2.9.8 scala-version 2.13.16 java-version 21.0.8-amzn play-slick-version 5.4.0 sbt-version 1.11.6 docker-registry funkychicken" 
+  sbt "dockerSeed base-image debian:bullseye-20250908-slim play-version 2.9.9 scala-version 2.13.16 java-version 21.0.8-amzn play-slick-version 5.4.0 sbt-version 1.11.6 docker-registry funkychicken" 
   ```
   
  - Non interactive with some custom values and some default values
@@ -93,9 +93,9 @@ Below are the various ways of generating images:
   ```
   Example:
   ```shell
-  docker manifest create talaengineering/play-dependencies-seed:play-2.9.8-sbt-1.11.6-scala-2.13.16-play-slick-5.4.0-java-21.0.8-amzn-debian-bullseye-20250407-slim-multiarch
-    --amend alice/play-dependencies-seed:play-2.9.8-sbt-1.11.6-scala-2.13.16-play-slick-5.4.0-java-21.0.8-amzn-debian-bullseye-20250407-slim-aarch64
-    --amend sally/play-dependencies-seed:play-2.9.8-sbt-1.11.6-scala-2.13.16-play-slick-5.4.0-java-21.0.8-amzn-debian-bullseye-20250407-slim-amd64
+  docker manifest create talaengineering/play-dependencies-seed:play-2.9.9-sbt-1.11.6-scala-2.13.16-play-slick-5.4.0-java-21.0.8-amzn-debian-bullseye-20250407-slim-multiarch
+    --amend alice/play-dependencies-seed:play-2.9.9-sbt-1.11.6-scala-2.13.16-play-slick-5.4.0-java-21.0.8-amzn-debian-bullseye-20250407-slim-aarch64
+    --amend sally/play-dependencies-seed:play-2.9.9-sbt-1.11.6-scala-2.13.16-play-slick-5.4.0-java-21.0.8-amzn-debian-bullseye-20250407-slim-amd64
   ```
 - Check the combined manifest
   ``shell
