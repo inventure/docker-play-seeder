@@ -2,6 +2,8 @@ name := "docker-play-seeder"
 organization := "co.tala"
 version := "1.0-SNAPSHOT"
 
+ThisBuild / scalaVersion := versions.scalaVersion
+
 // Fix Scala XML compatibility issue when using SBT 1.8.x https://eed3si9n.com/sbt-1.8.0
 ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
 
