@@ -41,22 +41,22 @@ Below are the various ways of generating images:
   [info] Loading settings for project root from dependencies.sbt,build.sbt ...
   [info] Set current project to play-docker-seeder (in build file:/Users/ivan/Code/env/inventure/apps/play-docker-seeder/)
   [info] ### Inquiring versions
-  Base Docker Image [debian:bullseye-20251208-slim] :
-  Play! version [2.9.10] :
+  Base Docker Image [debian:bullseye-20251229-slim] :
+  Play! version [3.0.6] :
   Scala version [2.13.18] :
   Java version [21.0.9-amzn] :
-  Play-Slick version [5.4.0] :
-  Sbt version [1.11.7] :
+  Play-Slick version [6.1.0] :
+  Sbt version [1.12.0] :
   Add os.arch suffix to image name (y/n) [y] :
   Docker registry [talaengineering] : myregistry
   Image tag (leave blank to use default) :
   [info] Working with versions:
-  [info] - base-image       => debian:bullseye-20251208-slim
-  [info] - play             => 2.9.10
+  [info] - base-image       => debian:bullseye-20251229-slim
+  [info] - play             => 3.0.6
   [info] - scala            => 2.13.18
   [info] - java             => 21.0.9-amzn
-  [info] - play-slick       => 5.4.0
-  [info] - sbt              => 1.11.7
+  [info] - play-slick       => 6.1.0
+  [info] - sbt              => 1.12.0
   [info] - registry         => talalawrenceasrikin
   [info] - custom image tag =>
   [info] ### Updating dependencies
@@ -69,12 +69,12 @@ Below are the various ways of generating images:
   
 - Non interactive using custom values
   ```shell 
-  sbt "dockerSeed base-image debian:bullseye-20251208-slim play-version 2.9.10 scala-version 2.13.18 java-version 21.0.9-amzn play-slick-version 5.4.0 sbt-version 1.11.7 docker-registry funkychicken" 
+  sbt "dockerSeed base-image debian:bullseye-20251229-slim play-version 3.0.6 scala-version 2.13.18 java-version 21.0.9-amzn play-slick-version 6.1.0 sbt-version 1.12.0 docker-registry funkychicken" 
   ```
   
  - Non interactive with some custom values and some default values
    ```shell 
-   sbt "dockerSeed with-defaults sbt-version 1.11.7 docker-registry monkeybusiness"
+   sbt "dockerSeed with-defaults sbt-version 1.12.0 docker-registry monkeybusiness"
    ``` 
    
  When the command returns, an image will be deployed to the specified docker registry. Below is the format of the image
@@ -93,17 +93,17 @@ Below are the various ways of generating images:
   ```
   Example:
   ```shell
-  docker manifest create talaengineering/play-dependencies-seed:play-2.9.10-sbt-1.11.7-scala-2.13.18-play-slick-5.4.0-java-21.0.9-amzn-debian-bullseye-20250407-slim-multiarch
-    --amend alice/play-dependencies-seed:play-2.9.10-sbt-1.11.7-scala-2.13.18-play-slick-5.4.0-java-21.0.9-amzn-debian-bullseye-20250407-slim-aarch64
-    --amend sally/play-dependencies-seed:play-2.9.10-sbt-1.11.7-scala-2.13.18-play-slick-5.4.0-java-21.0.9-amzn-debian-bullseye-20250407-slim-amd64
+  docker manifest create talaengineering/play-dependencies-seed:play-3.0.6-sbt-1.12.0-scala-2.13.18-play-slick-6.1.0-java-21.0.9-amzn-debian-bullseye-20250407-slim-multiarch
+    --amend alice/play-dependencies-seed:play-3.0.6-sbt-1.12.0-scala-2.13.18-play-slick-6.1.0-java-21.0.9-amzn-debian-bullseye-20250407-slim-aarch64
+    --amend sally/play-dependencies-seed:play-3.0.6-sbt-1.12.0-scala-2.13.18-play-slick-6.1.0-java-21.0.9-amzn-debian-bullseye-20250407-slim-amd64
   ```
 - Check the combined manifest
   ``shell
-  docker manifest inspect talaengineering/play-dependencies-seed:play-2.9.4-sbt-1.11.7-scala-2.13.18-play-slick-5.4.0-java-21.0.9-amzn-debian-bullseye-20240701-slim-multiarch
+  docker manifest inspect talaengineering/play-dependencies-seed:play-2.9.4-sbt-1.12.0-scala-2.13.18-play-slick-6.1.0-java-21.0.9-amzn-debian-bullseye-20240701-slim-multiarch
   ``
 - Push the combined manifest
   ``shell
-  docker manifest push talaengineering/play-dependencies-seed:play-2.9.4-sbt-1.11.7-scala-2.13.18-play-slick-5.4.0-java-21.0.9-amzn-debian-bullseye-20240701-slim-multiarch
+  docker manifest push talaengineering/play-dependencies-seed:play-2.9.4-sbt-1.12.0-scala-2.13.18-play-slick-6.1.0-java-21.0.9-amzn-debian-bullseye-20240701-slim-multiarch
   ``
 
 ### Notes
