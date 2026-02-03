@@ -1,8 +1,8 @@
 object versions {
-  val baseImage = "debian:bullseye-20260112-slim"
+  val baseImage = "debian:bullseye-20260202-slim"
   val javaVersion = "21.0.9-amzn"
-  val playVersion = "3.0.10"
-  val playSlickVersion = "6.2.0"
+  val playVersion = "2.9.10"
+  val playSlickVersion = "5.4.0"
   val scalaVersion = "2.13.18"
-  val sbtVersion = "1.12.0"
+  val sbtVersion = "1.11.7"
 }
