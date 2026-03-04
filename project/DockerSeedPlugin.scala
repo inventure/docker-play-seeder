@@ -236,7 +236,7 @@ object DockerSeedPlugin extends AutoPlugin {
     val log: ProcessLogger = processLogger(state)
     val imageTag: String = getDockerImageTag(state)
     val imageName: String = getAttributeKey(desiredBaseImage)(state)
-    val process: ProcessBuilder = stringToProcess(s"docker build -t $imageTag --build-arg BASE_IMAGE=$imageName .")
+    val process: ProcessBuilder = stringToProcess(s"docker build --provenance=false -t $imageTag --build-arg BASE_IMAGE=$imageName .")
     if (process ! log != 0) sys.error("Error building image")
     state
   }
