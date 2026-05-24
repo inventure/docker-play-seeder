@@ -4,9 +4,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  publish:
+  build-amd64:
     runs-on: ubuntu-latest
-
+    outputs:
+      image-tag: ${{ steps.image-tag.outputs.tag }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -23,5 +24,67 @@ jobs:
       - name: Log in to DockerHub
         run: docker login -u${{ secrets.DOCKERHUB_USERNAME }} -p${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
 
-      - name: Build and publish seed image
+      - name: Compute image tag
+        id: image-tag
+        run: |
+          BASE_IMAGE=$(grep 'val baseImage' project/versions.scala | sed 's/.*"\(.*\)".*/\1/' | tr ':' '-')
+          PLAY=$(grep 'val playVersion' project/versions.scala | sed 's/.*"\(.*\)".*/\1/')
+          SBT_VER=$(grep 'val sbtVersion' project/versions.scala | sed 's/.*"\(.*\)".*/\1/')
+          SCALA=$(grep 'val scalaVersion' project/versions.scala | sed 's/.*"\(.*\)".*/\1/')
+          SLICK=$(grep 'val playSlickVersion' project/versions.scala | sed 's/.*"\(.*\)".*/\1/')
+          JAVA=$(grep 'val javaVersion' project/versions.scala | sed 's/.*"\(.*\)".*/\1/')
+          TAG="${{ secrets.DOCKERHUB_PRIVATE_REGISTRY }}/play-dependencies-seed:play-${PLAY}-sbt-${SBT_VER}-scala-${SCALA}-play-slick-${SLICK}-java-${JAVA}-${BASE_IMAGE}-amd64"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Build and publish amd64 image
         run: sbt "dockerSeed with-defaults docker-registry ${{ secrets.DOCKERHUB_PRIVATE_REGISTRY }}"
+
+  build-arm64:
+    runs-on: ubuntu-24.04-arm
+    outputs:
+      image-tag: ${{ steps.image-tag.outputs.tag }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: corretto
+          java-version: 21
+
+      - name: Set up SBT
+        uses: sbt/setup-sbt@v1
+
+      - name: Log in to DockerHub
+        run: docker login -u${{ secrets.DOCKERHUB_USERNAME }} -p${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
+
+      - name: Compute image tag
+        id: image-tag
+        run: |
+          BASE_IMAGE=$(grep 'val baseImage' project/versions.scala | sed 's/.*"\(.*\)".*/\1/' | tr ':' '-')
+          PLAY=$(grep 'val playVersion' project/versions.scala | sed 's/.*"\(.*\)".*/\1/')
+          SBT_VER=$(grep 'val sbtVersion' project/versions.scala | sed 's/.*"\(.*\)".*/\1/')
+          SCALA=$(grep 'val scalaVersion' project/versions.scala | sed 's/.*"\(.*\)".*/\1/')
+          SLICK=$(grep 'val playSlickVersion' project/versions.scala | sed 's/.*"\(.*\)".*/\1/')
+          JAVA=$(grep 'val javaVersion' project/versions.scala | sed 's/.*"\(.*\)".*/\1/')
+          TAG="${{ secrets.DOCKERHUB_PRIVATE_REGISTRY }}/play-dependencies-seed:play-${PLAY}-sbt-${SBT_VER}-scala-${SCALA}-play-slick-${SLICK}-java-${JAVA}-${BASE_IMAGE}-aarch64"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Build and publish arm64 image
+        run: sbt "dockerSeed with-defaults docker-registry ${{ secrets.DOCKERHUB_PRIVATE_REGISTRY }}"
+
+  publish-multiarch:
+    needs: [build-amd64, build-arm64]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log in to DockerHub
+        run: docker login -u${{ secrets.DOCKERHUB_USERNAME }} -p${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
+
+      - name: Create and push multiarch manifest
+        run: |
+          AMD64_TAG="${{ needs.build-amd64.outputs.image-tag }}"
+          ARM64_TAG="${{ needs.build-arm64.outputs.image-tag }}"
+          MULTIARCH_TAG="${AMD64_TAG%-amd64}-multiarch"
+          docker manifest create $MULTIARCH_TAG --amend $AMD64_TAG --amend $ARM64_TAG
+          docker manifest push $MULTIARCH_TAG
