@@ -41,8 +41,8 @@ Below are the various ways of generating images:
   [info] Loading settings for project root from dependencies.sbt,build.sbt ...
   [info] Set current project to play-docker-seeder (in build file:/Users/alice/Code/env/inventure/apps/play-docker-seeder/)
   [info] ### Inquiring versions
-  Base Docker Image [debian:bullseye-20260421-slim] :
-  Play! version [3.0.10] :
+  Base Docker Image [debian:bullseye-20260518-slim] :
+  Play! version [3.0.11] :
   Scala version [2.13.18] :
   Java version [21.0.11-amzn] :
   Play-Slick version [6.2.0] :
@@ -51,8 +51,8 @@ Below are the various ways of generating images:
   Docker registry [changeme] : myregistry
   Image tag (leave blank to use default) :
   [info] Working with versions:
-  [info] - base-image       => debian:bullseye-20260421-slim
-  [info] - play             => 3.0.10
+  [info] - base-image       => debian:bullseye-20260518-slim
+  [info] - play             => 3.0.11
   [info] - scala            => 2.13.18
   [info] - java             => 21.0.11-amzn
   [info] - play-slick       => 6.2.0
@@ -69,7 +69,7 @@ Below are the various ways of generating images:
   
 - Non interactive using custom values
   ```shell 
-  sbt "dockerSeed base-image debian:bullseye-20260421-slim play-version 3.0.10 scala-version 2.13.18 java-version 21.0.11-amzn play-slick-version 6.2.0 sbt-version 1.12.11 docker-registry funkychicken" 
+  sbt "dockerSeed base-image debian:bullseye-20260518-slim play-version 3.0.11 scala-version 2.13.18 java-version 21.0.11-amzn play-slick-version 6.2.0 sbt-version 1.12.11 docker-registry funkychicken" 
   ```
   
  - Non interactive with some custom values and some default values
@@ -98,17 +98,17 @@ Below are the various ways of generating images:
   ```
   Example:
   ```shell
-  docker manifest create myregistry/play-dependencies-seed:play-3.0.10-sbt-1.12.11-scala-2.13.18-play-slick-6.2.0-java-21.0.11-amzn-debian-bullseye-20260421-slim-multiarch
-    --amend alice/play-dependencies-seed:play-3.0.10-sbt-1.12.11-scala-2.13.18-play-slick-6.2.0-java-21.0.11-amzn-debian-bullseye-20260421-slim-aarch64
-    --amend sally/play-dependencies-seed:play-3.0.10-sbt-1.12.11-scala-2.13.18-play-slick-6.2.0-java-21.0.11-amzn-debian-bullseye-20260421-slim-amd64
+  docker manifest create myregistry/play-dependencies-seed:play-3.0.11-sbt-1.12.11-scala-2.13.18-play-slick-6.2.0-java-21.0.11-amzn-debian-bullseye-20260518-slim-multiarch
+    --amend alice/play-dependencies-seed:play-3.0.11-sbt-1.12.11-scala-2.13.18-play-slick-6.2.0-java-21.0.11-amzn-debian-bullseye-20260518-slim-aarch64
+    --amend sally/play-dependencies-seed:play-3.0.11-sbt-1.12.11-scala-2.13.18-play-slick-6.2.0-java-21.0.11-amzn-debian-bullseye-20260518-slim-amd64
   ```
 - Check the combined manifest
   ``shell
-  docker manifest inspect myregistry/play-dependencies-seed:play-2.9.4-sbt-1.12.11-scala-2.13.18-play-slick-6.2.0-java-21.0.11-amzn-debian-bullseye-20260421-slim-multiarch
+  docker manifest inspect myregistry/play-dependencies-seed:play-2.9.4-sbt-1.12.11-scala-2.13.18-play-slick-6.2.0-java-21.0.11-amzn-debian-bullseye-20260518-slim-multiarch
   ``
 - Push the combined manifest
   ``shell
-  docker manifest push myregistry/play-dependencies-seed:play-2.9.4-sbt-1.12.11-scala-2.13.18-play-slick-6.2.0-java-21.0.11-amzn-debian-bullseye-20260421-slim-multiarch
+  docker manifest push myregistry/play-dependencies-seed:play-2.9.4-sbt-1.12.11-scala-2.13.18-play-slick-6.2.0-java-21.0.11-amzn-debian-bullseye-20260518-slim-multiarch
   ``
 
 ### Notes
