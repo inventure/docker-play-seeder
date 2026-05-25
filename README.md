@@ -76,7 +76,12 @@ Below are the various ways of generating images:
    ```shell 
    sbt "dockerSeed with-defaults sbt-version 1.12.11 docker-registry monkeybusiness"
    ``` 
-   
+
+ - Build the image locally without pushing (dry run)
+   ```shell
+   sbt "dockerSeed with-defaults skip-publish"
+   ```
+
  When the command returns, an image will be deployed to the specified docker registry. Below is the format of the image
  ``` 
  s"$registry/play-dependencies-seed:$playVersion-sbt-$sbtVersion-scala-$scalaVersion-play-slick-$playSlickVersion-java-$javaVersion-$osArch"

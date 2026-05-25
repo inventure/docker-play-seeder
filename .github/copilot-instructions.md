@@ -31,7 +31,7 @@ sbt "dockerSeed with-defaults docker-registry myregistry image-tag my-custom-tag
 sbt "dockerSeed with-defaults docker-registry myregistry add-os-suffix n"
 ```
 
-The working directory must have a clean git state for non-placeholder files — `resetDependencies` runs `git reset --hard HEAD` at the end to restore generated files.
+The working directory must have a clean git state for non-placeholder files — `resetDependencies` runs `git reset --hard HEAD` at the end to restore generated files. **Always commit your changes before running `dockerSeed`**, or they will be lost.
 
 There are no automated tests in this project.
 
