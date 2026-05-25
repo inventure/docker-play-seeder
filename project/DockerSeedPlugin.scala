@@ -85,6 +85,9 @@ object DockerSeedPlugin extends AutoPlugin {
       private[this] val WithDefaults: Parser[ParseResult] =
         (Space ~> token("with-defaults")) ^^^ ParseResult.WithDefaults
 
+      private[this] val SkipPublish: Parser[ParseResult] =
+        (Space ~> token("skip-publish")) ^^^ ParseResult.SkipPublish
+
       private[this] object ParseResult {
 
         final case class BaseImage(value: String) extends ParseResult
@@ -107,6 +110,8 @@ object DockerSeedPlugin extends AutoPlugin {
 
         case object WithDefaults extends ParseResult
 
+        case object SkipPublish extends ParseResult
+
       }
 
       private[this] val dockerSeedParser: Parser[Seq[ParseResult]] = (
@@ -116,6 +121,7 @@ object DockerSeedPlugin extends AutoPlugin {
           | PlayVersion
           | playSlickVersion
           | WithDefaults
+          | SkipPublish
           | SbtVersion
           | AddOsSuffix
           | DockerRegistry
@@ -123,6 +129,8 @@ object DockerSeedPlugin extends AutoPlugin {
         ).*
 
       val dockerSeedCommand: Command = Command(dockerSeedCommandKey)(_ => dockerSeedParser) { (st, args) =>
+        val skipPublishing = args.contains(ParseResult.SkipPublish)
+
         val startState: State = st
           .put(useDefaults, args.contains(ParseResult.WithDefaults))
           .put(commandLineBaseImage, args.collectFirst { case ParseResult.BaseImage(value) => value })
@@ -135,11 +143,12 @@ object DockerSeedPlugin extends AutoPlugin {
           .put(commandLineDockerRegistry, args.collectFirst { case ParseResult.DockerRegistry(value) => value })
           .put(commandLineImageTag, args.collectFirst { case ParseResult.ImageTag(value) => value })
 
+        val publishStep = if (skipPublishing) Seq.empty else Seq(runDockerPublish)
+
         Function.chain(
-          Seq(
-            inquireVersions, updateDependencies, updatePlugins, updateBuildProperties, updateSbtInit, runDockerBuild,
-            runDockerPublish, resetDependencies
-          )
+          Seq(inquireVersions, updateDependencies, updatePlugins, updateBuildProperties, updateSbtInit, runDockerBuild)
+            ++ publishStep
+            ++ Seq(resetDependencies)
         )(startState)
       }
     }
@@ -238,6 +247,7 @@ object DockerSeedPlugin extends AutoPlugin {
     val imageName: String = getAttributeKey(desiredBaseImage)(state)
     val process: ProcessBuilder = stringToProcess(s"docker build --provenance=false -t $imageTag --build-arg BASE_IMAGE=$imageName .")
     if (process ! log != 0) sys.error("Error building image")
+    state.log.info(s"### Docker image built: $imageTag")
     state
   }
 

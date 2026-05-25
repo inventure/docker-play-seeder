@@ -20,7 +20,18 @@ sbt "dockerSeed base-image debian:bullseye-20260421-slim play-version 3.0.10 sca
 
 # Mix: use defaults but override specific values
 sbt "dockerSeed with-defaults sbt-version 1.12.11 docker-registry myregistry"
+
+# Build the image locally without pushing (skip publish)
+sbt "dockerSeed with-defaults skip-publish"
+
+# Override the generated image tag entirely
+sbt "dockerSeed with-defaults docker-registry myregistry image-tag my-custom-tag"
+
+# Build without the os.arch suffix
+sbt "dockerSeed with-defaults docker-registry myregistry add-os-suffix n"
 ```
+
+The working directory must have a clean git state for non-placeholder files — `resetDependencies` runs `git reset --hard HEAD` at the end to restore generated files.
 
 There are no automated tests in this project.
 
