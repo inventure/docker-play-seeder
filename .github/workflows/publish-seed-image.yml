@@ -2,6 +2,15 @@ name: Publish Seed Image
 
 on:
   workflow_dispatch:
+    branches:
+      - master
+
+concurrency:
+  group: publish-seed-image
+  cancel-in-progress: false
+
+permissions:
+  contents: read
 
 jobs:
   build-amd64:
