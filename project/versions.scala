@@ -4,5 +4,5 @@ object versions {
   val playVersion = "3.0.11"
   val playSlickVersion = "6.2.0"
   val scalaVersion = "2.13.18"
-  val sbtVersion = "1.12.11"
+  val sbtVersion = "1.12.12"
 }
