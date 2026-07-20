@@ -16,10 +16,10 @@ sbt dockerSeed
 sbt "dockerSeed with-defaults"
 
 # Non-interactive with explicit values
-sbt "dockerSeed base-image debian:trixie-20260610-slim play-version 3.0.11 scala-version 2.13.18 java-version 21.0.11-amzn play-slick-version 6.2.0 sbt-version 1.12.12 docker-registry myregistry"
+sbt "dockerSeed base-image debian:trixie-20260713-slim play-version 3.0.11 scala-version 2.13.18 java-version 21.0.11-amzn play-slick-version 6.2.0 sbt-version 1.12.14 docker-registry myregistry"
 
 # Mix: use defaults but override specific values
-sbt "dockerSeed with-defaults sbt-version 1.12.12 docker-registry myregistry"
+sbt "dockerSeed with-defaults sbt-version 1.12.14 docker-registry myregistry"
 
 # Build the image locally without pushing (skip publish)
 sbt "dockerSeed with-defaults skip-publish"
