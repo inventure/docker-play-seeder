@@ -31,6 +31,9 @@ jobs:
       - name: Log in to DockerHub
         run: docker login -u${{ secrets.DOCKERHUB_USERNAME }} -p${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
 
+      - name: Log in to Docker Hardened Images registry
+        run: docker login dhi.io -u${{ secrets.DOCKERHUB_USERNAME }} -p${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
+
       - name: Build and publish amd64 image
         run: sbt "dockerSeed with-defaults docker-registry ${{ secrets.DOCKERHUB_PRIVATE_REGISTRY }}"
 
@@ -51,6 +54,9 @@ jobs:
 
       - name: Log in to DockerHub
         run: docker login -u${{ secrets.DOCKERHUB_USERNAME }} -p${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
+
+      - name: Log in to Docker Hardened Images registry
+        run: docker login dhi.io -u${{ secrets.DOCKERHUB_USERNAME }} -p${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
 
       - name: Build and publish arm64 image
         run: sbt "dockerSeed with-defaults docker-registry ${{ secrets.DOCKERHUB_PRIVATE_REGISTRY }}"
