@@ -2,14 +2,14 @@
 
 source $SDKMAN_DIR/bin/sdkman-init.sh
 
-# Install Java and SBT - Reference: https://www.scala-sbt.org/1.x/docs/Installing-sbt-on-Linux.html
+# The base image (Amazon Corretto DHI) already ships a hardened, pinned JDK, so we
+# skip SDKMAN's Java install to avoid installing a second, non-hardened JVM. Only
+# SBT is installed via SDKMAN. Reference: https://www.scala-sbt.org/1.x/docs/Installing-sbt-on-Linux.html
 sdk update
-sdk install java 21.0.12-amzn
 sdk install sbt 1.13.0
 
-# Create a symlink to /usr/bin so they can be used in plain sh
+# Create a symlink to /usr/bin so it can be used in plain sh
 ln -s $SDKMAN_DIR/candidates/sbt/current/bin/sbt /usr/bin/sbt
-ln -s $SDKMAN_DIR/candidates/java/current/bin/java /usr/bin/java
 
 # Remove temporary files
 rm -rf $SDKMAN_DIR/archives/* && rm -rf $SDKMAN_DIR/tmp/*
