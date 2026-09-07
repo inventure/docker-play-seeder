@@ -75,7 +75,7 @@ jobs:
         run: |
           PRIVATE_REGISTRY="${{ secrets.DOCKERHUB_PRIVATE_REGISTRY }}"
           PUBLIC_REGISTRY="${{ secrets.DOCKERHUB_PUBLIC_REGISTRY }}"
-          BASE_IMAGE=$(grep 'val baseImage' project/versions.scala | sed 's/.*"\(.*\)".*/\1/' | tr ':' '-')
+          BASE_IMAGE=$(grep 'val baseImage' project/versions.scala | sed 's/.*"\(.*\)".*/\1/' | tr ':/' '-')
           PLAY=$(grep 'val playVersion' project/versions.scala | sed 's/.*"\(.*\)".*/\1/')
           SBT_VER=$(grep 'val sbtVersion' project/versions.scala | sed 's/.*"\(.*\)".*/\1/')
           SCALA=$(grep 'val scalaVersion' project/versions.scala | sed 's/.*"\(.*\)".*/\1/')

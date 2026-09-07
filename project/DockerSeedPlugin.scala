@@ -299,7 +299,7 @@ object DockerSeedPlugin extends AutoPlugin {
   }
 
   private def getDockerImageTag(implicit state: State): String = {
-    val baseImage: String = getAttributeKey(desiredBaseImage).replace(':', '-')
+    val baseImage: String = getAttributeKey(desiredBaseImage).replaceAll("[:/]", "-")
     val playVersion: String = getAttributeKey(desiredPlayVersion)
     val playSlickVersion = getAttributeKey(desiredPlaySlickVersion)
     val sbtVersion = getAttributeKey(desiredSbtVersion)
