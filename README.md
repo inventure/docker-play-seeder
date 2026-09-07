@@ -12,15 +12,19 @@ Preliminary tests have shown that preemptively downloading and caching the above
 ### Usage
 
 Run `sbt dockerSeed` to generate Docker images containing cached versions of `play`, `play-slick`,
-`sbt`, `scala`, and `java` deployed to a Docker registry of your choice. 
+`sbt`, and `scala` deployed to a Docker registry of your choice. Java is provided by the chosen
+base image rather than managed by this tool (see [Notes](#notes) below).
 You must have permissions to push to the specified Docker registry.
 
 When the command returns, an image will be deployed to the specified docker registry. Below is the format of the image
  ``` 
- s"$registry/play-dependencies-seed:$playVersion-sbt-$sbtVersion-scala-$scalaVersion-play-slick-$playSlickVersion-java-$javaVersion-$osArch"
+ s"$registry/play-dependencies-seed:$playVersion-sbt-$sbtVersion-scala-$scalaVersion-play-slick-$playSlickVersion-$baseImage[-$osArch]"
  ```
 
 #### Notes
+The Java version used in the generated image is determined entirely by the chosen `base-image` (e.g. `dhi.io/amazoncorretto:21-debian13-dev`
+ships JDK 21). There is no separate `java-version` option — pick a base image that already bundles the JDK version you need.
+
 The Docker setup of this service is written and tested on Debian-based Linux distros (e.g. Debian, Ubuntu, Kali, etc.).
 If you wish to use this project with other distros, you might need to make small adjustments to the 
 [Dockerfile](Dockerfile), e.g. replacing `apt-get` with `yum` or `apk`, installing additional packages, etc.
@@ -51,7 +55,6 @@ Below are the various ways of generating images:
   Base Docker Image [mydistro:abc-0.0.0] :
   Play! version [1.1.1] :
   Scala version [2.2.2] :
-  Java version [3.3.3-amzn] :
   Play-Slick version [4.4.4] :
   Sbt version [5.5.5] :
   Add os.arch suffix to image name (y/n) [y] :
@@ -61,7 +64,6 @@ Below are the various ways of generating images:
   [info] - base-image       => mydistro:abc-0.0.0
   [info] - play             => 1.1.1
   [info] - scala            => 2.2.2
-  [info] - java             => 3.3.3-amzn
   [info] - play-slick       => 4.4.4
   [info] - sbt              => 5.5.5
   [info] - registry         => myregistry
@@ -76,7 +78,7 @@ Below are the various ways of generating images:
   
 - Non interactive using custom values
   ```shell 
-  sbt "dockerSeed base-image mydistro:abc-0.0.0 play-version 1.1.1 scala-version 2.2.2 java-version 3.3.3-amzn play-slick-version 4.4.4 sbt-version 5.5.5 docker-registry funkychicken" 
+  sbt "dockerSeed base-image mydistro:abc-0.0.0 play-version 1.1.1 scala-version 2.2.2 play-slick-version 4.4.4 sbt-version 5.5.5 docker-registry funkychicken" 
   ```
   
  - Non interactive with some custom values and some default values
@@ -100,17 +102,17 @@ Below are the various ways of generating images:
   ```
   Example:
   ```shell
-  docker manifest create myregistry/play-dependencies-seed:play-1.1.1-sbt-5.5.5-scala-2.2.2-play-slick-4.4.4-java-3.3.3-amzn-mydistro-abc-0.0.0-multiarch
-    --amend alice/play-dependencies-seed:play-1.1.1-sbt-5.5.5-scala-2.2.2-play-slick-4.4.4-java-3.3.3-amzn-mydistro-abc-0.0.0-aarch64
-    --amend sally/play-dependencies-seed:play-1.1.1-sbt-5.5.5-scala-2.2.2-play-slick-4.4.4-java-3.3.3-amzn-mydistro-abc-0.0.0-amd64
+  docker manifest create myregistry/play-dependencies-seed:play-1.1.1-sbt-5.5.5-scala-2.2.2-play-slick-4.4.4-mydistro-abc-0.0.0-multiarch
+    --amend alice/play-dependencies-seed:play-1.1.1-sbt-5.5.5-scala-2.2.2-play-slick-4.4.4-mydistro-abc-0.0.0-aarch64
+    --amend sally/play-dependencies-seed:play-1.1.1-sbt-5.5.5-scala-2.2.2-play-slick-4.4.4-mydistro-abc-0.0.0-amd64
   ```
 - Check the combined manifest
   ``shell
-  docker manifest inspect myregistry/play-dependencies-seed:play-2.9.4-sbt-5.5.5-scala-2.2.2-play-slick-4.4.4-java-3.3.3-amzn-mydistro-abc-0.0.0-multiarch
+  docker manifest inspect myregistry/play-dependencies-seed:play-2.9.4-sbt-5.5.5-scala-2.2.2-play-slick-4.4.4-mydistro-abc-0.0.0-multiarch
   ``
 - Push the combined manifest
   ``shell
-  docker manifest push myregistry/play-dependencies-seed:play-2.9.4-sbt-5.5.5-scala-2.2.2-play-slick-4.4.4-java-3.3.3-amzn-mydistro-abc-0.0.0-multiarch
+  docker manifest push myregistry/play-dependencies-seed:play-2.9.4-sbt-5.5.5-scala-2.2.2-play-slick-4.4.4-mydistro-abc-0.0.0-multiarch
   ``
 
 ### Notes

@@ -16,7 +16,7 @@ sbt dockerSeed
 sbt "dockerSeed with-defaults"
 
 # Non-interactive with explicit values
-sbt "dockerSeed base-image mydistro:abc-0.0.0 play-version 1.1.1 scala-version 2.2.2 java-version 3.3.3-amzn play-slick-version 4.4.4 sbt-version 5.5.5 docker-registry myregistry"
+sbt "dockerSeed base-image mydistro:abc-0.0.0 play-version 1.1.1 scala-version 2.2.2 play-slick-version 4.4.4 sbt-version 5.5.5 docker-registry myregistry"
 
 # Mix: use defaults but override specific values
 sbt "dockerSeed with-defaults sbt-version 5.5.5 docker-registry myregistry"
@@ -50,8 +50,9 @@ When run, it executes this pipeline in sequence:
 7. **`runDockerPublish`** — Runs `docker push <tag>`
 8. **`resetDependencies`** — Runs `git reset --hard HEAD` to restore modified files
 
-The `Dockerfile` uses SDKMAN to install Java and SBT, then runs `sbt clean update` (via `sbt-init.sh`) to pull and cache
-all dependencies into the image layer.
+The `Dockerfile` uses SDKMAN to install SBT, then runs `sbt clean update` (via `sbt-init.sh`) to pull and cache
+all dependencies into the image layer. Java is not installed via SDKMAN — it must already be provided by the
+chosen `base-image` (e.g. a JDK-bundled image like `dhi.io/amazoncorretto:21-debian13-dev`).
 
 ## Key Conventions
 
@@ -59,7 +60,7 @@ all dependencies into the image layer.
 
 Files under `project/placeholders/` use `[token]` syntax for version substitution:
 
-- `[play_version]`, `[scala_version]`, `[java_version]`, `[sbt_version]`, `[play_slick_version]`
+- `[play_version]`, `[scala_version]`, `[sbt_version]`, `[play_slick_version]`
 
 These are the canonical templates; the root-level `dependencies.sbt`, `sbt-init.sh`, `project/plugins.sbt`, and
 `project/build.properties` are generated files that get reset after each build.
@@ -68,13 +69,14 @@ These are the canonical templates; the root-level `dependencies.sbt`, `sbt-init.
 
 All defaults live in two files:
 
-- `project/versions.scala` — component versions (Play, Scala, Java, SBT, play-slick, base image)
+- `project/versions.scala` — component versions (Play, Scala, SBT, play-slick, base image). Java is not
+  a separate version — it's determined by whichever base image is selected.
 - `project/docker.scala` — default Docker registry (`changeme`)
 
 ### Image tag format
 
 ```
-$registry/play-dependencies-seed:play-$playVersion-sbt-$sbtVersion-scala-$scalaVersion-play-slick-$playSlickVersion-java-$javaVersion-$baseImage[-$osArch]
+$registry/play-dependencies-seed:play-$playVersion-sbt-$sbtVersion-scala-$scalaVersion-play-slick-$playSlickVersion-$baseImage[-$osArch]
 ```
 
 The `os.arch` suffix is appended when `add-os-suffix` is `y`/`yes` (default). Use this to build arch-specific images 
