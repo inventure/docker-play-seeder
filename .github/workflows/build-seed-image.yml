@@ -27,6 +27,9 @@ jobs:
       - name: Set up SBT
         uses: sbt/setup-sbt@v1
 
+      - name: Log in to Docker Hardened Images registry
+        run: docker login dhi.io -u${{ secrets.DOCKERHUB_USERNAME }} -p${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
+
       - name: Build amd64 image
         run: sbt "dockerSeed with-defaults skip-publish"
 
@@ -44,6 +47,9 @@ jobs:
 
       - name: Set up SBT
         uses: sbt/setup-sbt@v1
+
+      - name: Log in to Docker Hardened Images registry
+        run: docker login dhi.io -u${{ secrets.DOCKERHUB_USERNAME }} -p${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
 
       - name: Build arm64 image
         run: sbt "dockerSeed with-defaults skip-publish"
