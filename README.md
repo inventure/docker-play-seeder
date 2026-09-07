@@ -11,9 +11,14 @@ Preliminary tests have shown that preemptively downloading and caching the above
 
 ### Usage
 
-You can use this project to generate Docker images containing cached versions of `play`, `play-slick`,
-`sbt`, `scala`, and `java` deployed to a Docker registry of your choice — you must have permissions to push to the 
-specified Docker registry.
+Run `sbt dockerSeed` to generate Docker images containing cached versions of `play`, `play-slick`,
+`sbt`, `scala`, and `java` deployed to a Docker registry of your choice. 
+You must have permissions to push to the specified Docker registry.
+
+When the command returns, an image will be deployed to the specified docker registry. Below is the format of the image
+ ``` 
+ s"$registry/play-dependencies-seed:$playVersion-sbt-$sbtVersion-scala-$scalaVersion-play-slick-$playSlickVersion-java-$javaVersion-$osArch"
+ ```
 
 #### Notes
 The Docker setup of this service is written and tested on Debian-based Linux distros (e.g. Debian, Ubuntu, Kali, etc.).
@@ -31,7 +36,9 @@ Below are the various ways of generating images:
   sbt dockerSeed
   ```
   
-  You will be asked for the versions to be used. Below is a sample log of events from this process
+  You will be asked for the versions to be used. Below is a sample log of events from this process.
+  Note that the version numbers shown below are for illustration purposes only. Make sure to check the actual
+  versions of the dependencies you wish to pull.
   ``` 
   $ sbt dockerSeed
   [info] Loading settings for project global-plugins from idea.sbt ...
@@ -41,22 +48,22 @@ Below are the various ways of generating images:
   [info] Loading settings for project root from dependencies.sbt,build.sbt ...
   [info] Set current project to play-docker-seeder (in build file:/Users/alice/Code/env/inventure/apps/play-docker-seeder/)
   [info] ### Inquiring versions
-  Base Docker Image [debian:trixie-20260803-slim] :
-  Play! version [3.0.11] :
-  Scala version [2.13.18] :
-  Java version [21.0.12-amzn] :
-  Play-Slick version [6.2.0] :
-  Sbt version [1.13.0] :
+  Base Docker Image [mydistro:abc-0.0.0] :
+  Play! version [1.1.1] :
+  Scala version [2.2.2] :
+  Java version [3.3.3-amzn] :
+  Play-Slick version [4.4.4] :
+  Sbt version [5.5.5] :
   Add os.arch suffix to image name (y/n) [y] :
   Docker registry [changeme] : myregistry
   Image tag (leave blank to use default) :
   [info] Working with versions:
-  [info] - base-image       => debian:trixie-20260803-slim
-  [info] - play             => 3.0.11
-  [info] - scala            => 2.13.18
-  [info] - java             => 21.0.12-amzn
-  [info] - play-slick       => 6.2.0
-  [info] - sbt              => 1.13.0
+  [info] - base-image       => mydistro:abc-0.0.0
+  [info] - play             => 1.1.1
+  [info] - scala            => 2.2.2
+  [info] - java             => 3.3.3-amzn
+  [info] - play-slick       => 4.4.4
+  [info] - sbt              => 5.5.5
   [info] - registry         => myregistry
   [info] - custom image tag =>
   [info] ### Updating dependencies
@@ -69,23 +76,18 @@ Below are the various ways of generating images:
   
 - Non interactive using custom values
   ```shell 
-  sbt "dockerSeed base-image debian:trixie-20260803-slim play-version 3.0.11 scala-version 2.13.18 java-version 21.0.12-amzn play-slick-version 6.2.0 sbt-version 1.13.0 docker-registry funkychicken" 
+  sbt "dockerSeed base-image mydistro:abc-0.0.0 play-version 1.1.1 scala-version 2.2.2 java-version 3.3.3-amzn play-slick-version 4.4.4 sbt-version 5.5.5 docker-registry funkychicken" 
   ```
   
  - Non interactive with some custom values and some default values
    ```shell 
-   sbt "dockerSeed with-defaults sbt-version 1.13.0 docker-registry monkeybusiness"
+   sbt "dockerSeed with-defaults sbt-version 5.5.5 docker-registry monkeybusiness"
    ``` 
 
  - Build the image locally without pushing (dry run)
    ```shell
    sbt "dockerSeed with-defaults skip-publish"
    ```
-
- When the command returns, an image will be deployed to the specified docker registry. Below is the format of the image
- ``` 
- s"$registry/play-dependencies-seed:$playVersion-sbt-$sbtVersion-scala-$scalaVersion-play-slick-$playSlickVersion-java-$javaVersion-$osArch"
- ```
 
 ### Combining multiple images into a single multiarch repository
 - Create images for each os/arch you wish to support with compatible machine
@@ -98,17 +100,17 @@ Below are the various ways of generating images:
   ```
   Example:
   ```shell
-  docker manifest create myregistry/play-dependencies-seed:play-3.0.11-sbt-1.13.0-scala-2.13.18-play-slick-6.2.0-java-21.0.12-amzn-debian-trixie-20260803-slim-multiarch
-    --amend alice/play-dependencies-seed:play-3.0.11-sbt-1.13.0-scala-2.13.18-play-slick-6.2.0-java-21.0.12-amzn-debian-trixie-20260803-slim-aarch64
-    --amend sally/play-dependencies-seed:play-3.0.11-sbt-1.13.0-scala-2.13.18-play-slick-6.2.0-java-21.0.12-amzn-debian-trixie-20260803-slim-amd64
+  docker manifest create myregistry/play-dependencies-seed:play-1.1.1-sbt-5.5.5-scala-2.2.2-play-slick-4.4.4-java-3.3.3-amzn-mydistro-abc-0.0.0-multiarch
+    --amend alice/play-dependencies-seed:play-1.1.1-sbt-5.5.5-scala-2.2.2-play-slick-4.4.4-java-3.3.3-amzn-mydistro-abc-0.0.0-aarch64
+    --amend sally/play-dependencies-seed:play-1.1.1-sbt-5.5.5-scala-2.2.2-play-slick-4.4.4-java-3.3.3-amzn-mydistro-abc-0.0.0-amd64
   ```
 - Check the combined manifest
   ``shell
-  docker manifest inspect myregistry/play-dependencies-seed:play-2.9.4-sbt-1.13.0-scala-2.13.18-play-slick-6.2.0-java-21.0.12-amzn-debian-trixie-20260803-slim-multiarch
+  docker manifest inspect myregistry/play-dependencies-seed:play-2.9.4-sbt-5.5.5-scala-2.2.2-play-slick-4.4.4-java-3.3.3-amzn-mydistro-abc-0.0.0-multiarch
   ``
 - Push the combined manifest
   ``shell
-  docker manifest push myregistry/play-dependencies-seed:play-2.9.4-sbt-1.13.0-scala-2.13.18-play-slick-6.2.0-java-21.0.12-amzn-debian-trixie-20260803-slim-multiarch
+  docker manifest push myregistry/play-dependencies-seed:play-2.9.4-sbt-5.5.5-scala-2.2.2-play-slick-4.4.4-java-3.3.3-amzn-mydistro-abc-0.0.0-multiarch
   ``
 
 ### Notes
