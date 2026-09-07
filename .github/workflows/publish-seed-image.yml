@@ -80,9 +80,8 @@ jobs:
           SBT_VER=$(grep 'val sbtVersion' project/versions.scala | sed 's/.*"\(.*\)".*/\1/')
           SCALA=$(grep 'val scalaVersion' project/versions.scala | sed 's/.*"\(.*\)".*/\1/')
           SLICK=$(grep 'val playSlickVersion' project/versions.scala | sed 's/.*"\(.*\)".*/\1/')
-          JAVA=$(grep 'val javaVersion' project/versions.scala | sed 's/.*"\(.*\)".*/\1/')
-          PRIVATE_BASE="${PRIVATE_REGISTRY}/play-dependencies-seed:play-${PLAY}-sbt-${SBT_VER}-scala-${SCALA}-play-slick-${SLICK}-java-${JAVA}-${BASE_IMAGE}"
-          MULTIARCH_TAG="${PUBLIC_REGISTRY}/play-dependencies-seed:play-${PLAY}-sbt-${SBT_VER}-scala-${SCALA}-play-slick-${SLICK}-java-${JAVA}-${BASE_IMAGE}-multiarch"
+          PRIVATE_BASE="${PRIVATE_REGISTRY}/play-dependencies-seed:play-${PLAY}-sbt-${SBT_VER}-scala-${SCALA}-play-slick-${SLICK}-${BASE_IMAGE}"
+          MULTIARCH_TAG="${PUBLIC_REGISTRY}/play-dependencies-seed:play-${PLAY}-sbt-${SBT_VER}-scala-${SCALA}-play-slick-${SLICK}-${BASE_IMAGE}-multiarch"
           docker manifest create ${MULTIARCH_TAG} \
             --amend ${PRIVATE_BASE}-amd64 \
             --amend ${PRIVATE_BASE}-aarch64

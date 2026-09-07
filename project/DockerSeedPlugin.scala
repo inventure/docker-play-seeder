@@ -26,9 +26,6 @@ object DockerSeedPlugin extends AutoPlugin {
       val commandLineScalaVersion = AttributeKey[Option[String]]("command-line-scala-version")
       val desiredScalaVersion = AttributeKey[String]("desired-scala-version")
 
-      val commandLineJavaVersion = AttributeKey[Option[String]]("command-line-java-version")
-      val desiredJavaVersion = AttributeKey[String]("desired-java-version")
-
       val commandLinePlaySlickVersion = AttributeKey[Option[String]]("command-line-slick-version")
       val desiredPlaySlickVersion = AttributeKey[String]("desired-slick-version")
 
@@ -56,10 +53,6 @@ object DockerSeedPlugin extends AutoPlugin {
 
       private[this] val ScalaVersion: Parser[ParseResult] =
         (Space ~> token("scala-version") ~> Space ~> token(StringBasic, "<scala version>"))
-          .map(ParseResult.ScalaVersion)
-
-      private[this] val JavaVersion: Parser[ParseResult] =
-        (Space ~> token("java-version") ~> Space ~> token(StringBasic, "<java version>"))
           .map(ParseResult.ScalaVersion)
 
       private[this] val playSlickVersion: Parser[ParseResult] =
@@ -96,8 +89,6 @@ object DockerSeedPlugin extends AutoPlugin {
 
         final case class ScalaVersion(value: String) extends ParseResult
 
-        final case class JavaVersion(value: String) extends ParseResult
-
         final case class playSlickVersion(value: String) extends ParseResult
 
         final case class SbtVersion(value: String) extends ParseResult
@@ -117,7 +108,6 @@ object DockerSeedPlugin extends AutoPlugin {
       private[this] val dockerSeedParser: Parser[Seq[ParseResult]] = (
         BaseImage
           | ScalaVersion
-          | JavaVersion
           | PlayVersion
           | playSlickVersion
           | WithDefaults
@@ -136,7 +126,6 @@ object DockerSeedPlugin extends AutoPlugin {
           .put(commandLineBaseImage, args.collectFirst { case ParseResult.BaseImage(value) => value })
           .put(commandLinePlayVersion, args.collectFirst { case ParseResult.PlayVersion(value) => value })
           .put(commandLineScalaVersion, args.collectFirst { case ParseResult.ScalaVersion(value) => value })
-          .put(commandLineJavaVersion, args.collectFirst { case ParseResult.JavaVersion(value) => value })
           .put(commandLinePlaySlickVersion, args.collectFirst { case ParseResult.playSlickVersion(value) => value })
           .put(commandLineSbtVersion, args.collectFirst { case ParseResult.SbtVersion(value) => value })
           .put(commandLineAddOsSuffix, args.collectFirst { case ParseResult.AddOsSuffix(value) => value })
@@ -167,7 +156,6 @@ object DockerSeedPlugin extends AutoPlugin {
     val base = readVersion(baseImage, "Base Docker Image [%s] : ", useDefs, state.get(commandLineBaseImage).flatten)
     val play = readVersion(playVersion, "Play! version [%s] : ", useDefs, state.get(commandLinePlayVersion).flatten)
     val scala = readVersion(scalaVersion, "Scala version [%s] : ", useDefs, state.get(commandLineScalaVersion).flatten)
-    val java = readVersion(javaVersion, "Java version [%s] : ", useDefs, state.get(commandLineJavaVersion).flatten)
     val slick = readVersion(playSlickVersion, "Play-Slick version [%s] : ", useDefs,
       state.get(commandLinePlaySlickVersion).flatten)
     val sbt = readVersion(sbtVersion, "Sbt version [%s] : ", useDefs, state.get(commandLineSbtVersion).flatten)
@@ -182,7 +170,6 @@ object DockerSeedPlugin extends AutoPlugin {
       .put(desiredBaseImage, base)
       .put(desiredPlayVersion, play)
       .put(desiredScalaVersion, scala)
-      .put(desiredJavaVersion, java)
       .put(desiredPlaySlickVersion, slick)
       .put(desiredSbtVersion, sbt)
       .put(desiredAddOsSuffix, addOsSuffix)
@@ -194,7 +181,6 @@ object DockerSeedPlugin extends AutoPlugin {
          |- base-image       => $base
          |- play             => $play
          |- scala            => $scala
-         |- java             => $java
          |- play-slick       => $slick
          |- sbt              => $sbt
          |- registry         => $registry
@@ -283,7 +269,6 @@ object DockerSeedPlugin extends AutoPlugin {
           .replaceAll("\\[play_slick_version]", getAttributeKey(desiredPlaySlickVersion))
           .replaceAll("\\[sbt_version]", getAttributeKey(desiredSbtVersion))
           .replaceAll("\\[scala_version]", getAttributeKey(desiredScalaVersion))
-          .replaceAll("\\[java_version]", getAttributeKey(desiredJavaVersion))
         printWriter.println(replacedLine)
       }
       printWriter.close()
@@ -304,7 +289,6 @@ object DockerSeedPlugin extends AutoPlugin {
     val playSlickVersion = getAttributeKey(desiredPlaySlickVersion)
     val sbtVersion = getAttributeKey(desiredSbtVersion)
     val scalaVersion = getAttributeKey(desiredScalaVersion)
-    val javaVersion = getAttributeKey(desiredJavaVersion)
     val registry = getAttributeKey(desiredDockerRegistry)
     val addOsSuffix = getAttributeKey(desiredAddOsSuffix).toLowerCase match {
       case "y" | "yes" => osArch
@@ -315,7 +299,6 @@ object DockerSeedPlugin extends AutoPlugin {
       Some(s"sbt-$sbtVersion"),
       Some(s"scala-$scalaVersion"),
       Some(s"play-slick-$playSlickVersion"),
-      Some(s"java-$javaVersion"),
       Some(s"$baseImage"),
       addOsSuffix
     ).flatten.mkString("-")
