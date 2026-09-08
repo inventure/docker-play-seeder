@@ -2,8 +2,6 @@ name: Publish Seed Image
 
 on:
   workflow_dispatch:
-    branches:
-      - master
 
 concurrency:
   group: publish-seed-image
@@ -13,7 +11,18 @@ permissions:
   contents: read
 
 jobs:
+  verify-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ensure run is against master
+        run: |
+          if [ "${{ github.ref }}" != "refs/heads/master" ]; then
+            echo "::error::This workflow can only be manually triggered against the master branch (got '${{ github.ref }}')."
+            exit 1
+          fi
+
   build-amd64:
+    needs: verify-branch
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -38,6 +47,7 @@ jobs:
         run: sbt "dockerSeed with-defaults docker-registry ${{ secrets.DOCKERHUB_PRIVATE_REGISTRY }}"
 
   build-arm64:
+    needs: verify-branch
     runs-on: ubuntu-24.04-arm
     steps:
       - name: Checkout
@@ -85,9 +95,6 @@ jobs:
           docker manifest create ${MULTIARCH_TAG} \
             --amend ${PRIVATE_BASE}-amd64 \
             --amend ${PRIVATE_BASE}-aarch64
-          PUSH_OUTPUT=$(docker manifest push ${MULTIARCH_TAG} 2>&1) && echo "$PUSH_OUTPUT" || {
-            echo "$PUSH_OUTPUT"
-            echo "$PUSH_OUTPUT" | grep -qi "denied\|already exists\|immutable\|tag invalid\|400\|409" \
-              && echo "Image already exists in public registry — skipping (expected for immutable tags)" \
-              || (echo "Unexpected error pushing manifest" && exit 1)
-          }
+          # The public registry tag is now mutable, so pushes always overwrite
+          # rather than being rejected — any failure here is a real error.
+          docker manifest push ${MULTIARCH_TAG}
