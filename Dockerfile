@@ -1,8 +1,9 @@
 ARG BASE_IMAGE
 FROM $BASE_IMAGE AS compile
 
-# Install ZIP and cURL
+# Upgrade OS packages to pick up latest security patches before installing deps
 RUN apt-get update && \
+    apt-get upgrade -y && \
     apt-get install -y zip unzip curl git && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /tmp/*
