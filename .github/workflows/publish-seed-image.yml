@@ -2,6 +2,8 @@ name: Publish Seed Image
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * 1'  # Every Monday at 06:00 UTC
 
 concurrency:
   group: publish-seed-image
