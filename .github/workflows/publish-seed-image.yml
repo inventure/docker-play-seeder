@@ -37,7 +37,21 @@ jobs:
           java-version: 21
 
       - name: Set up SBT
+        id: setup-sbt
+        continue-on-error: true
         uses: sbt/setup-sbt@v1
+        with:
+          sbt-runner-version: 2.0.12
+
+      - name: Clear partial SBT installation before retry
+        if: steps.setup-sbt.outcome == 'failure'
+        run: rm -rf "${RUNNER_TOOL_CACHE}/sbt/2.0.12"
+
+      - name: Retry SBT setup
+        if: steps.setup-sbt.outcome == 'failure'
+        uses: sbt/setup-sbt@v1
+        with:
+          sbt-runner-version: 2.0.12
 
       - name: Log in to DockerHub
         run: docker login -u${{ secrets.DOCKERHUB_USERNAME }} -p${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
