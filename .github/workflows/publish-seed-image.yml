@@ -92,11 +92,21 @@ jobs:
           SBT_VER=$(grep 'val sbtVersion' project/versions.scala | sed 's/.*"\(.*\)".*/\1/')
           SCALA=$(grep 'val scalaVersion' project/versions.scala | sed 's/.*"\(.*\)".*/\1/')
           SLICK=$(grep 'val playSlickVersion' project/versions.scala | sed 's/.*"\(.*\)".*/\1/')
+          IMAGE_TAG="play-${PLAY}-sbt-${SBT_VER}-scala-${SCALA}-play-slick-${SLICK}-${BASE_IMAGE}-multiarch"
           PRIVATE_BASE="${PRIVATE_REGISTRY}/play-dependencies-seed:play-${PLAY}-sbt-${SBT_VER}-scala-${SCALA}-play-slick-${SLICK}-${BASE_IMAGE}"
-          MULTIARCH_TAG="${PUBLIC_REGISTRY}/play-dependencies-seed:play-${PLAY}-sbt-${SBT_VER}-scala-${SCALA}-play-slick-${SLICK}-${BASE_IMAGE}-multiarch"
+          MULTIARCH_TAG="${PUBLIC_REGISTRY}/play-dependencies-seed:${IMAGE_TAG}"
           docker manifest create ${MULTIARCH_TAG} \
             --amend ${PRIVATE_BASE}-amd64 \
             --amend ${PRIVATE_BASE}-aarch64
           # The public registry tag is now mutable, so pushes always overwrite
           # rather than being rejected — any failure here is a real error.
           docker manifest push ${MULTIARCH_TAG}
+          echo "IMAGE_TAG=${IMAGE_TAG}" >> "$GITHUB_ENV"
+
+      - name: Warm JFrog Docker Hub proxy cache for new tag
+        # Dependabot in consuming repos reads this image's tags through the JFrog
+        # Docker Hub remote repo, which only caches a tag once something pulls it
+        # through JFrog. Without this, Dependabot never sees freshly published tags.
+        run: |
+          docker login tala-tala-dockerhub.jfrog.io -u${{ secrets.JFROG_ARTIFACTORY_CREDENTIALS_USR }} -p${{ secrets.JFROG_ARTIFACTORY_CREDENTIALS_PSW }}
+          docker pull tala-tala-dockerhub.jfrog.io/talaengineering/play-dependencies-seed:${IMAGE_TAG}
