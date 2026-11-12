@@ -108,11 +108,11 @@ Below are the various ways of generating images:
   ```
 - Check the combined manifest
   ``shell
-  docker manifest inspect myregistry/play-dependencies-seed:play-2.9.4-sbt-5.5.5-scala-2.2.2-play-slick-4.4.4-mydistro-abc-0.0.0-multiarch
+  docker manifest inspect myregistry/play-dependencies-seed:play-1.1.1-sbt-5.5.5-scala-2.2.2-play-slick-4.4.4-mydistro-abc-0.0.0-multiarch
   ``
 - Push the combined manifest
   ``shell
-  docker manifest push myregistry/play-dependencies-seed:play-2.9.4-sbt-5.5.5-scala-2.2.2-play-slick-4.4.4-mydistro-abc-0.0.0-multiarch
+  docker manifest push myregistry/play-dependencies-seed:play-1.1.1-sbt-5.5.5-scala-2.2.2-play-slick-4.4.4-mydistro-abc-0.0.0-multiarch
   ``
 
 ### Notes
