@@ -87,7 +87,9 @@ jobs:
         run: |
           PRIVATE_REGISTRY="${{ secrets.DOCKERHUB_PRIVATE_REGISTRY }}"
           PUBLIC_REGISTRY="${{ secrets.DOCKERHUB_PUBLIC_REGISTRY }}"
-          BASE_IMAGE=$(grep 'val baseImage' project/versions.scala | sed 's/.*"\(.*\)".*/\1/' | tr ':/' '-')
+          # Must match DockerSeedPlugin.scala's getDockerImageTag sanitization exactly,
+          # or this manifest step won't find the per-arch tags build-amd64/build-arm64 pushed.
+          BASE_IMAGE=$(grep 'val baseImage' project/versions.scala | sed 's/.*"\(.*\)".*/\1/' | tr ':/.' '-' | sed -E 's/([a-zA-Z])([0-9])/\1-\2/g')
           PLAY=$(grep 'val playVersion' project/versions.scala | sed 's/.*"\(.*\)".*/\1/')
           SBT_VER=$(grep 'val sbtVersion' project/versions.scala | sed 's/.*"\(.*\)".*/\1/')
           SCALA=$(grep 'val scalaVersion' project/versions.scala | sed 's/.*"\(.*\)".*/\1/')

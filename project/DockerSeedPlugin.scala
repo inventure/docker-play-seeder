@@ -284,7 +284,13 @@ object DockerSeedPlugin extends AutoPlugin {
   }
 
   private def getDockerImageTag(implicit state: State): String = {
-    val baseImage: String = getAttributeKey(desiredBaseImage).replaceAll("[:/]", "-")
+    // Dependabot's docker tag-version regex can't parse a tag containing a literal "."
+    // (e.g. "dhi.io") or a word fused directly to a digit with no separator (e.g.
+    // "debian13") — ATD-9837. Keep every base-image token hyphen-separated so published
+    // tags stay comparable across versions.
+    val baseImage: String = getAttributeKey(desiredBaseImage)
+      .replaceAll("[:/.]", "-")
+      .replaceAll("([a-zA-Z])([0-9])", "$1-$2")
     val playVersion: String = getAttributeKey(desiredPlayVersion)
     val playSlickVersion = getAttributeKey(desiredPlaySlickVersion)
     val sbtVersion = getAttributeKey(desiredSbtVersion)
